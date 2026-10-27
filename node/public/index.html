@@ -8,6 +8,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
     :root {
@@ -419,7 +420,7 @@
     const LIFF_ID = "2012217753-jKG877EO";
     
     // 🔴 วาง URL ที่ได้จาก Google Apps Script (ที่ลงท้ายด้วย /exec)
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxIKas3moS8q1ScUj-mZY-XMxSnRexzHxPb3BDTIPs/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyeSwvNSfHtXULSvj_QLLYACKYfZ2Yf0T4Aqa3fFroDF3ugCxJ-1oYRItsZzkAyAqIa/exec";
 
     const MOCK_PROFILE = {
       userId: "U_MOCK_DEV_STUDENT_001",
@@ -475,7 +476,7 @@
 
     function initLIFF() {
       if (typeof liff === "undefined") {
-        alert("ไม่พบ LIFF SDK กรุณาเปิดผ่านแอปพลิเคชัน LINE");
+        showAlert("ไม่พบ LIFF SDK กรุณาเปิดผ่านแอปพลิเคชัน LINE");
         return;
       }
       liff.init({ liffId: LIFF_ID })
@@ -492,7 +493,7 @@
         })
         .catch(err => {
           console.error("LIFF Init Error:", err);
-          alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + err);
+          showAlert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + err);
         });
     }
 
@@ -518,7 +519,7 @@
     async function loadRegistrationOptions() {
       const res = await apiCall("getRegistrationOptions");
       if (!res || !res.success) {
-        alert("ไม่สามารถดึงข้อมูลนักเรียนได้: " + (res ? res.message : ''));
+        showAlert("ไม่สามารถดึงข้อมูลนักเรียนได้: " + (res ? res.message : ''));
         return;
       }
 
@@ -582,7 +583,7 @@
       const role = document.getElementById("regRole").value;
 
       if (!studentCode || !fullName || !classRoom) {
-        alert("กรุณาเลือกข้อมูลให้ครบถ้วน");
+        showAlert("กรุณาเลือกข้อมูลให้ครบถ้วน");
         return;
       }
 
@@ -605,7 +606,7 @@
         const verifyRes = await apiCall("verifyAndLogAccess", currentUserProfile);
         handleVerifyResponse(verifyRes);
       } else {
-        alert("ลงทะเบียนไม่สำเร็จ: " + (res ? res.message : ''));
+        showAlert("ลงทะเบียนไม่สำเร็จ: " + (res ? res.message : ''));
         document.getElementById("loading").style.display = "none";
         document.getElementById("registerView").style.display = "block";
       }
@@ -613,7 +614,7 @@
 
     async function openProgressModule() {
       if (!currentUserData || !currentUserData.studentCode) {
-        alert("ไม่พบรหัสนักเรียนในระบบ");
+        showAlert("ไม่พบรหัสนักเรียนในระบบ");
         return;
       }
       const res = await apiCall("getStudentProgressData", { studentCode: currentUserData.studentCode });
@@ -622,7 +623,7 @@
 
     function renderProgressModal(res) {
       if (!res || !res.success || !res.data) {
-        alert("ยังไม่มีข้อมูลผลการประเมินสำหรับรหัสนักเรียน: " + (currentUserData ? currentUserData.studentCode : ''));
+        showAlert("ยังไม่มีข้อมูลผลการประเมินสำหรับรหัสนักเรียน: " + (currentUserData ? currentUserData.studentCode : ''));
         return;
       }
       const d = res.data;
@@ -766,7 +767,7 @@
         document.getElementById("btnStartCam").classList.add("d-none");
         document.getElementById("btnRecord").classList.remove("d-none");
       } catch (err) {
-        alert("ไม่สามารถเข้าถึงกล้อง/ไมโครโฟนได้: " + err.message);
+        showAlert("ไม่สามารถเข้าถึงกล้อง/ไมโครโฟนได้: " + err.message);
       }
     }
 
@@ -831,10 +832,10 @@
         stopCamera();
 
         if (res && res.success) {
-          alert("บันทึกและอัปโหลดวิดีโอเข้า Google Drive เรียบร้อยแล้ว!");
+          showAlert("สำเร็จ!", "บันทึกและอัปโหลดวิดีโอเข้า Google Drive เรียบร้อยแล้ว", "success");
           openSingingModule();
         } else {
-          alert("เกิดข้อผิดพลาดในการอัปโหลด: " + (res ? res.message : ''));
+          showAlert("เกิดข้อผิดพลาด", res ? res.message : "อัปโหลดไม่สำเร็จ", "error");
         }
       };
 
@@ -902,10 +903,10 @@
         document.getElementById("loading").style.display = "none";
 
         if (res && res.success) {
-          alert("อัปโหลดลง Google Drive สำเร็จ!");
+          showToast("อัปโหลดลง Google Drive สำเร็จ!", "success");
           loadSingingHistory();
         } else {
-          alert("อัปโหลดไม่สำเร็จ: " + (res ? res.message : ''));
+          showAlert("อัปโหลดไม่สำเร็จ: " + (res ? res.message : ''));
         }
       };
       reader.readAsDataURL(file);
@@ -918,6 +919,34 @@
     function openGuitarModule() {
       alert("เปิดหน้าระบบ: บันทึกการเล่นกีต้าร์");
     }
+
+// ฟังก์ชันแจ้งเตือนแบบสวยงามด้วย SweetAlert2 (แทน alert ดั้งเดิม)
+function showAlert(title, text, icon = 'success') {
+  Swal.fire({
+    title: title,
+    text: text,
+    icon: icon,
+    confirmButtonText: 'ตกลง',
+    confirmButtonColor: '#d63384',
+    customClass: {
+      popup: 'rounded-4',
+      confirmButton: 'px-4 py-2 rounded-3'
+    }
+  });
+}
+
+// ฟังก์ชันแจ้งเตือนแบบ Toast สั้นๆ มุมบน
+function showToast(title, icon = 'success') {
+  Swal.fire({
+    toast: true,
+    position: 'top',
+    icon: icon,
+    title: title,
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true
+  });
+}
   </script>
 </body>
 </html>
