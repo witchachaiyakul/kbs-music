@@ -389,13 +389,6 @@
             <i class="fa-solid fa-circle me-1"></i>กดเพื่อบันทึกวิดีโอ
           </button>
         </div>
-
-        <div class="w-100 mt-1">
-          <label for="cameraInput" class="btn btn-outline-danger fw-bold w-100 py-2">
-            <i class="fa-solid fa-upload me-1"></i>อัปโหลดคลิปจากเครื่อง / กล้องมือถือ
-          </label>
-          <input type="file" id="cameraInput" accept="video/*" capture="user" class="d-none" onchange="handleVideoFile(event)">
-        </div>
       </div>
     </div>
 
@@ -874,42 +867,6 @@
           </div>
         `;
       });
-    }
-
-    function handleVideoFile(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onloadend = async function() {
-        const base64Data = reader.result.split(',')[1];
-        
-        document.getElementById("loadingText").textContent = "กำลังอัปโหลดคลิปวิดีโอ...";
-        document.getElementById("loading").style.display = "block";
-
-        const res = await apiCall("uploadSingingVideo", {
-          userId: currentUserProfile ? currentUserProfile.userId : '',
-          displayName: currentUserProfile ? currentUserProfile.displayName : '',
-          role: currentUserData ? currentUserData.role : 'Student',
-          studentCode: currentUserData ? currentUserData.studentCode : '08714',
-          studentName: currentUserData ? currentUserData.fullName : 'นักเรียนทดสอบ',
-          classRoom: currentUserData ? currentUserData.classRoom : '1',
-          category: 'การร้องเพลง',
-          assignmentTitle: 'คลิปอัปโหลดการร้องเพลง',
-          mimeType: file.type || 'video/mp4',
-          base64: base64Data
-        });
-
-        document.getElementById("loading").style.display = "none";
-
-        if (res && res.success) {
-          showToast("อัปโหลดลง Google Drive สำเร็จ!", "success");
-          loadSingingHistory();
-        } else {
-          showAlert("อัปโหลดไม่สำเร็จ: " + (res ? res.message : ''));
-        }
-      };
-      reader.readAsDataURL(file);
     }
 
     function openDrumModule() {
