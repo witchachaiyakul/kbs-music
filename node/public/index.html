@@ -456,9 +456,21 @@ async function apiCall(action, payload = {}) {
     // ==========================================
     // 👨‍🏫 TEACHER DASHBOARD LOGIC
     // ==========================================
+    // 🟢 แก้ไขฟังก์ชัน loadTeacherDashboardData ใน public/index.html
     async function loadTeacherDashboardData() {
+      console.log("🔍 กำลังเริ่มดึงข้อมูล Teacher Dashboard...");
+      
       const res = await apiCall("getTeacherDashboard");
-      if (!res || !res.success) return;
+      console.log("📦 ผลลัพธ์จาก API (getTeacherDashboard):", res);
+
+      // 🔴 หากดึงข้อมูลไม่สำเร็จ ให้แสดงข้อความแจ้งเตือนในตารางทันที
+      if (!res || !res.success) {
+        const tbody = document.getElementById("tStudentTableBody");
+        const errorMsg = res ? res.message : "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้";
+        console.error("❌ โหลดข้อมูลล้มเหลว:", errorMsg);
+        tbody.innerHTML = `<tr><td colspan="8" class="py-3 text-danger fw-bold"><i class="fa-solid fa-triangle-exclamation me-1"></i>เกิดข้อผิดพลาด: ${errorMsg}</td></tr>`;
+        return;
+      }
 
       allTeacherStudents = res.students;
       
@@ -470,7 +482,6 @@ async function apiCall(action, payload = {}) {
 
       renderTeacherTable(allTeacherStudents);
     }
-
     function filterTeacherTable() {
       const room = document.getElementById("tFilterClassroom").value;
       if (room === "ALL") {
