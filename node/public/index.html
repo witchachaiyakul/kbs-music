@@ -325,6 +325,51 @@
       <span class="badge bg-danger px-3 py-2"><i class="fa-solid fa-user-graduate me-1"></i>นักเรียน</span>
     </div>
 
+        <!-- 🟢 การ์ดแสดงผล Radar Chart 3 ด้าน (ครู / นักเรียน / ผู้ปกครอง) -->
+    <div class="card card-custom p-3 bg-white mb-4">
+      <h6 class="fw-bold text-dark mb-3">
+        <i class="fa-solid fa-chart-pie text-danger me-2"></i>เปรียบเทียบผลการประเมิน 3 ฝ่าย (360 Degree Feedback)
+      </h6>
+
+      <div class="row g-3">
+        <!-- 1. กราฟคะแนนจากครู -->
+        <div class="col-12 col-md-4">
+          <div class="border rounded-4 p-3 text-center bg-light">
+            <h6 class="fw-bold text-danger mb-2">
+              <i class="fa-solid fa-user-tie me-1"></i>1. ประเมินโดยครู
+            </h6>
+            <div style="position: relative; height: 230px; width: 100%;">
+              <canvas id="radarChartTeacher"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. กราฟคะแนนประเมินตนเองโดยนักเรียน -->
+        <div class="col-12 col-md-4">
+          <div class="border rounded-4 p-3 text-center bg-light">
+            <h6 class="fw-bold text-primary mb-2">
+              <i class="fa-solid fa-user-graduate me-1"></i>2. ประเมินตนเอง (นักเรียน)
+            </h6>
+            <div style="position: relative; height: 230px; width: 100%;">
+              <canvas id="radarChartStudent"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. กราฟคะแนนจากผู้ปกครอง -->
+        <div class="col-12 col-md-4">
+          <div class="border rounded-4 p-3 text-center bg-light">
+            <h6 class="fw-bold text-success mb-2">
+              <i class="fa-solid fa-users me-1"></i>3. ประเมินโดยผู้ปกครอง
+            </h6>
+            <div style="position: relative; height: 230px; width: 100%;">
+              <canvas id="radarChartParent"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Rubrics -->
     <div class="card card-custom border-0 p-3 bg-white mb-3">
       <h6 class="fw-bold text-dark mb-2" style="font-size: 0.85rem;">
@@ -433,6 +478,10 @@
     let mediaRecorder = null;
     let recordedChunks = [];
     let isRecording = false;
+
+    let chartTeacherInstance = null;
+    let chartStudentInstance = null;
+    let chartParentInstance = null;
 
     // REST API Caller helper function (แก้ปัญหา google.script.run)
     async function apiCall(action, payload = {}) {
@@ -902,6 +951,130 @@ function showToast(title, icon = 'success') {
     timer: 3000,
     timerProgressBar: true
   });
+}
+
+// 🟢 ฟังก์ชันวาด Radar Chart 3 วงแยกตามผู้ประเมิน
+function initThreePartyRadarCharts(teacherScores, studentScores, parentScores) {
+  // ข้อความบอกระดับตามวงกลมซ้อนกัน 4 วง
+  const levelLabels = ["", "เริ่มต้น", "กำลังพัฒนา", "สามารถ", "เหนือความคาดหวัง"];
+  
+  // หัวข้อเกณฑ์การประเมิน 3 ด้าน
+  const radarLabels = ['1. จังหวะ', '2. ทำนอง', '3. การถ่ายทอดและการแสดงออก'];
+
+  const getCommonOptions = (titleText) => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: 15 },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const val = context.raw || 0;
+            return `${context.label}: ระดับ ${val} (${levelLabels[val] || 'ยังไม่ประเมิน'})`;
+          }
+        }
+      }
+    },
+    scales: {
+      r: {
+        min: 0,
+        max: 4,
+        ticks: {
+          stepSize: 1,
+          display: true,
+          font: { family: 'Sarabun', size: 9 },
+          color: '#6c757d',
+          callback: function(value) {
+            return levelLabels[value] || ''; // แสดงชื่อระดับบนเส้นวงกลมซ้อนกัน
+          }
+        },
+        pointLabels: {
+          font: { family: 'Sarabun', size: 11, weight: 'bold' },
+          color: '#333'
+        },
+        grid: { color: 'rgba(0,0,0,0.12)' },
+        angleLines: { color: 'rgba(0,0,0,0.15)' }
+      }
+    }
+  });
+
+  // 1. กราฟคะแนนจากครู (สีชมพู/แดง)
+  if (chartTeacherInstance) chartTeacherInstance.destroy();
+  const ctxTeacher = document.getElementById('radarChartTeacher').getContext('2d');
+  chartTeacherInstance = new Chart(ctxTeacher, {
+    type: 'radar',
+    data: {
+      labels: radarLabels,
+      datasets: [{
+        label: 'คะแนนจากครู',
+        data: teacherScores || [0, 0, 0], // ค่าตั้งต้นกรณีไม่มีข้อมูล [จังหวะ, ทำนอง, แสดงออก]
+        backgroundColor: 'rgba(214, 51, 132, 0.25)',
+        borderColor: '#d63384',
+        borderWidth: 2,
+        pointBackgroundColor: '#d63384',
+        pointRadius: 4
+      }]
+    },
+    options: getCommonOptions('คะแนนจากครู')
+  });
+
+  // 2. กราฟคะแนนจากนักเรียน (สีฟ้า)
+  if (chartStudentInstance) chartStudentInstance.destroy();
+  const ctxStudent = document.getElementById('radarChartStudent').getContext('2d');
+  chartStudentInstance = new Chart(ctxStudent, {
+    type: 'radar',
+    data: {
+      labels: radarLabels,
+      datasets: [{
+        label: 'คะแนนประเมินตนเอง',
+        data: studentScores || [0, 0, 0],
+        backgroundColor: 'rgba(13, 110, 253, 0.25)',
+        borderColor: '#0d6efd',
+        borderWidth: 2,
+        pointBackgroundColor: '#0d6efd',
+        pointRadius: 4
+      }]
+    },
+    options: getCommonOptions('คะแนนประเมินตนเอง')
+  });
+
+  // 3. กราฟคะแนนจากผู้ปกครอง (สีเขียว)
+  if (chartParentInstance) chartParentInstance.destroy();
+  const ctxParent = document.getElementById('radarChartParent').getContext('2d');
+  chartParentInstance = new Chart(ctxParent, {
+    type: 'radar',
+    data: {
+      labels: radarLabels,
+      datasets: [{
+        label: 'คะแนนจากผู้ปกครอง',
+        data: parentScores || [0, 0, 0],
+        backgroundColor: 'rgba(25, 135, 84, 0.25)',
+        borderColor: '#198754',
+        borderWidth: 2,
+        pointBackgroundColor: '#198754',
+        pointRadius: 4
+      }]
+    },
+    options: getCommonOptions('คะแนนจากผู้ปกครอง')
+  });
+}
+
+// 🟢 ฟังก์ชันดึงข้อมูลการประเมินจาก Google Sheets ผ่าน GAS API
+async function loadEvaluationRadarData(submissionId) {
+  const res = await apiCall("getEvaluationData", { submissionId: submissionId });
+  
+  if (res && res.success) {
+    // โหลดคะแนนแต่ละฝ่าย [จังหวะ, ทำนอง, การถ่ายทอดและการแสดงออก] (ค่าระดับ 1 - 4)
+    const teacherData = res.teacher || [0, 0, 0];
+    const studentData = res.student || [0, 0, 0];
+    const parentData = res.parent || [0, 0, 0];
+    
+    initThreePartyRadarCharts(teacherData, studentData, parentData);
+  } else {
+    // ถ้ายังไม่มีข้อมูลประเมิน แสดงกราฟเป็น 0
+    initThreePartyRadarCharts([0,0,0], [0,0,0], [0,0,0]);
+  }
 }
   </script>
 </body>
