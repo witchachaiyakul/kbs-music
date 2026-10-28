@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบรายงานความก้าวหน้าการเรียนรู้ - วิชา ดนตรีสากล</title>
+  <title>ดนตรีสากล-ระดับชั้นมัธยมศึกษาปีที่ 3</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
-<style>
+  <style>
     :root {
       --primary-color: #d63384;
       --bg-gradient: linear-gradient(135deg, #fff5f8 0%, #fce4ec 100%);
@@ -21,7 +21,6 @@
       min-height: 100vh;
       padding-bottom: 2rem;
     }
-    
     .top-header-bar {
       background: #ffffff;
       border-radius: 0 0 20px 20px;
@@ -32,7 +31,6 @@
     .card-custom { border: none; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
     .profile-header { background: white; border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(214, 51, 132, 0.1); }
 
-    /* 🟢 สไตล์ช่อง Rubric แบบกดเลือกสีได้ */
     .rubric-cell {
       cursor: pointer;
       transition: all 0.2s ease-in-out;
@@ -44,11 +42,10 @@
     }
     .rubric-cell.locked { cursor: not-allowed; }
     
-    /* สีไฮไลท์ช่องเมื่อเลือก (ระดับ 1 - 4) */
-    .selected-1 { background-color: #dc3545 !important; color: white !important; font-weight: bold; } /* เริ่มต้น - สีแดง */
-    .selected-2 { background-color: #ffc107 !important; color: #212529 !important; font-weight: bold; } /* กำลังพัฒนา - สีเหลือง */
-    .selected-3 { background-color: #198754 !important; color: white !important; font-weight: bold; } /* สามารถ - สีเขียว */
-    .selected-4 { background-color: #0d6efd !important; color: white !important; font-weight: bold; } /* เหนือความคาดหวัง - สีฟ้า */
+    .selected-1 { background-color: #dc3545 !important; color: white !important; font-weight: bold; }
+    .selected-2 { background-color: #ffc107 !important; color: #212529 !important; font-weight: bold; }
+    .selected-3 { background-color: #198754 !important; color: white !important; font-weight: bold; }
+    .selected-4 { background-color: #0d6efd !important; color: white !important; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -60,10 +57,10 @@
            alt="School Logo" 
            class="header-logo me-3 rounded-circle border border-danger p-1">
       <div>
-        <h6 class="fw-bold mb-0 text-dark" style="color: var(--primary-color);">วิชา ดนตรีสากล</h6>
+        <h6 class="fw-bold mb-0 text-dark" style="color: var(--primary-color);">ดนตรีสากล</h6>
         <div class="small text-muted fw-semibold">
-          <span class="badge bg-danger bg-opacity-10 text-danger me-1">ศ 23103</span>
-          <span>ระดับชั้นมัธยมศึกษาปีที่ 3</span>
+          <span class="badge bg-danger bg-opacity-10 text-danger me-1">ศ23103</span>
+          <span>ชั้นมัธยมศึกษาปีที่ 3</span>
         </div>
       </div>
     </div>
@@ -117,8 +114,7 @@
     </div>
   </div>
 
-
-<!-- 🟢 TEACHER DASHBOARD VIEW (สำหรับคุณครู) -->
+  <!-- 🟢 TEACHER DASHBOARD VIEW (สำหรับคุณครู) -->
   <div id="teacherDashboardView" class="container mb-4" style="display: none; max-width: 700px;">
     <div class="profile-header d-flex align-items-center mb-3">
       <img id="tUserImg" src="" class="rounded-circle me-3 border border-2 border-danger" width="55" height="55">
@@ -127,7 +123,7 @@
           <h6 class="fw-bold mb-0 text-dark" id="tUserName">ครูประจำวิชา</h6>
           <span class="badge bg-danger rounded-pill">Teacher</span>
         </div>
-        <small class="text-muted d-block mt-1">ระบบบริหารจัดการผลการประเมินนักเรียน</small>
+        <small class="text-muted d-block mt-1">จัดการผลการประเมินนักเรียน</small>
       </div>
     </div>
 
@@ -163,7 +159,7 @@
     </div>
   </div>  
 
-<!-- MAIN DASHBOARD CONTAINER (สำหรับ นักเรียน / ผู้ปกครอง) -->
+  <!-- MAIN DASHBOARD CONTAINER (สำหรับ นักเรียน / ผู้ปกครอง) -->
   <div id="mainDashboard" class="container" style="display: none; max-width: 500px;">
     <div class="profile-header d-flex align-items-center mb-4">
       <img id="userImg" src="" class="rounded-circle me-3 border border-2 border-danger" width="55" height="55">
@@ -176,7 +172,95 @@
       </div>
     </div>
 
-<!-- Main Menu -->
+    <!-- กล่องความก้าวหน้าและเกรดสรุป -->
+    <div class="card card-custom p-3 bg-white mb-4 shadow-sm">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="fw-bold text-dark m-0">
+          <i class="fa-solid fa-chart-line text-danger me-2"></i>ระดับผลการเรียนรู้
+        </h6>
+        <span id="totalWeightedScoreBadge" class="badge bg-danger fs-6 px-3 py-2 rounded-pill">
+          คะแนนรวม: 0.0 / 100
+        </span>
+      </div>
+
+<!-- แถบหัวข้อระดับการประเมิน 4 ระดับ + คอลัมน์คะแนน -->
+  <div class="d-flex align-items-center gap-2 mb-2">
+    <div style="width: 85px;"></div>
+    <div class="flex-grow-1 row g-0 text-center small fw-bold ms-1">
+      <div class="col-3 text-danger">เริ่มต้น (1)</div>
+      <div class="col-3 text-warning">กำลังพัฒนา (2)</div>
+      <div class="col-3 text-success">สามารถ (3)</div>
+      <div class="col-3 text-primary" style="font-size: 0.7rem;">เหนือความคาดหวัง (4)</div>
+    </div>
+    <div class="text-center small fw-bold text-danger" style="width: 75px;">คะแนน</div>
+  </div>
+
+  <!-- แถบความก้าวหน้าทั้ง 4 รายวิชา + ช่องคะแนนเต็ม -->
+  <div class="vstack gap-2">
+    <!-- 1. ร้องเพลง (เต็ม 20) -->
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">1.ร้องเพลง</span>
+      <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+        <div id="barSinging" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+        <span id="valSinging" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+      </div>
+      <span id="scoreSinging" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 20</span>
+    </div>
+
+    <!-- 2. ตีกลอง (เต็ม 15) -->
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">2.ตีกลอง</span>
+      <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+        <div id="barDrum" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+        <span id="valDrum" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+      </div>
+      <span id="scoreDrum" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 15</span>
+    </div>
+
+    <!-- 3. เล่นกีต้าร์ (เต็ม 15) -->
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">3.เล่นกีต้าร์</span>
+      <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+        <div id="barGuitar" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+        <span id="valGuitar" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+      </div>
+      <span id="scoreGuitar" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 15</span>
+    </div>
+
+    <!-- 4. รวมวง (เต็ม 50) -->
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">4.รวมวง</span>
+      <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+        <div id="barEnsemble" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+        <span id="valEnsemble" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+      </div>
+      <span id="scoreEnsemble" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 50</span>
+    </div>
+  </div>
+
+  <hr class="my-3 text-muted">
+
+  <!-- แถบสรุประดับเกรด 8 ช่อง (0, 1, 1.5, 2, 2.5, 3, 3.5, 4) -->
+  <div>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <span class="fw-bold small text-secondary"><i class="fa-solid fa-award me-1"></i>เกรด:</span>
+      <span id="finalGradeText" class="fw-bold text-danger">เกรด: 0</span>
+    </div>
+    
+    <div class="row g-1 text-center" id="gradeSegmentsContainer">
+      <div class="col" data-grade="0"><div class="p-1 rounded border small fw-bold bg-light text-muted">0</div></div>
+      <div class="col" data-grade="1"><div class="p-1 rounded border small fw-bold bg-light text-muted">1</div></div>
+      <div class="col" data-grade="1.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">1.5</div></div>
+      <div class="col" data-grade="2"><div class="p-1 rounded border small fw-bold bg-light text-muted">2</div></div>
+      <div class="col" data-grade="2.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">2.5</div></div>
+      <div class="col" data-grade="3"><div class="p-1 rounded border small fw-bold bg-light text-muted">3</div></div>
+      <div class="col" data-grade="3.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">3.5</div></div>
+      <div class="col" data-grade="4"><div class="p-1 rounded border small fw-bold bg-light text-muted">4</div></div>
+    </div>
+  </div>
+</div>
+
+    <!-- Main Menu -->
     <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-shapes text-danger me-2"></i>เมนูหลักระบบ</h6>
     <div class="row g-3">
       <div class="col-12">
@@ -188,7 +272,7 @@
             <div class="flex-grow-1">
               <span class="badge bg-danger mb-1" style="font-size: 0.65rem;">พร้อมใช้งาน</span>
               <h6 class="fw-bold text-dark mb-0">1. บันทึกการร้องเพลง</h6>
-              <small class="text-muted">บันทึกวิดีโอและระบบประเมิน 3 ฝ่าย</small>
+              <small class="text-muted">บันทึกวิดีโอและประเมิน</small>
             </div>
             <i class="fa-solid fa-chevron-right text-muted ms-2"></i>
           </div>
@@ -205,23 +289,23 @@
           <i class="fa-solid fa-arrow-left"></i>
         </button>
         <div>
-          <h6 class="fw-bold mb-0 text-dark" id="singingModuleHeaderTitle"><i class="fa-solid fa-microphone-lines text-danger me-2"></i>บันทึกการร้องเพลง</h6>
-          <small class="text-muted" id="singingModuleHeaderSub">ระบบประเมินผลการเรียนรู้ 3 ฝ่าย</small>
+          <h6 class="fw-bold mb-0 text-dark" id="singingStudentName"><i class="fa-solid fa-microphone-lines text-danger me-2"></i>บันทึกการร้องเพลง</h6>
+          <small class="text-muted" id="singingModuleHeaderSub">ประเมินการร้องเพลง</small>
         </div>
       </div>
       <span class="badge bg-danger px-3 py-2" id="singingRoleBadge">นักเรียน</span>
     </div>
 
-    <!-- การแจ้งเตือนสถานะการประเมิน -->
+    <!-- แจ้งเตือนสถานะการประเมิน -->
     <div id="evalStatusAlert" class="alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2">
       <i class="fa-solid fa-triangle-exclamation fs-4"></i>
       <div>
         <strong id="evalAlertTitle">ยังไม่ได้ประเมิน</strong>
-        <div class="small" id="evalAlertDesc">กรุณากดดูคลิปล่าสุดและทำการกดประเมินให้คะแนนในตารางด้านล่าง</div>
+        <div class="small" id="evalAlertDesc">กรุณากดดูคลิปล่าสุดและกดประเมินให้คะแนนในตารางด้านล่าง</div>
       </div>
     </div>
 
-    <!-- ส่วนอัดวิดีโอ (เฉพาะนักเรียน) -->
+    <!-- ส่วนอัดวิดีโอ -->
     <div id="videoRecordSection" class="card card-custom p-3 bg-white text-center mb-3">
       <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-video me-1 text-danger"></i>อัดวิดีโอการร้องเพลง</h6>
       <p class="text-muted small mb-3">ความละเอียดประหยัดพื้นที่ (Max 720p) บันทึกตรงลง Google Drive</p>
@@ -243,15 +327,22 @@
       </div>
     </div>
 
-    <!-- ปุ่มกดดูคลิปล่าสุด -->
-    <div id="latestVideoCard" class="card card-custom p-3 bg-white mb-3 text-center d-none">
-      <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-circle-play text-danger me-1"></i>คลิปวิดีโอประกอบการประเมินล่าสุด</h6>
-      <a id="btnWatchLatestVideo" href="#" target="_blank" class="btn btn-outline-danger fw-bold py-2 px-4 rounded-3">
-        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>กดดูคลิปวิดีโอล่าสุดใน Google Drive
-      </a>
+    <!-- ส่วนแสดงวิดีโอ -->
+    <div id="latestVideoCard" class="card card-custom p-3 bg-white mb-3 text-center">
+      <h6 class="fw-bold text-dark mb-2">
+        <i class="fa-solid fa-circle-play text-danger me-2"></i>วิดีโอการร้องเพลงประกอบการประเมิน
+      </h6>
+
+      <div id="videoContainer" class="ratio ratio-16x9 rounded-4 overflow-hidden border border-1 border-danger border-opacity-25 shadow-sm d-none">
+        <iframe id="videoPlayerFrame" src="" allow="autoplay" allowfullscreen style="border: 0;"></iframe>
+      </div>
+
+      <div id="noVideoAlert" class="p-3 bg-light rounded-4 text-muted small d-none">
+        <i class="fa-solid fa-video-slash me-1 text-secondary"></i>ไม่พบวิดีโอการร้องเพลงในระบบ (นักเรียนยังไม่ได้อัปโหลดคลิป)
+      </div>
     </div>
 
-    <!-- 🟢 ตาราง Rubric Interactive (กดเลือกช่องได้ตามสี) -->
+    <!-- ตาราง Rubric Interactive -->
     <div class="card card-custom border-0 p-3 bg-white mb-3">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="fw-bold text-dark mb-0" style="font-size: 0.85rem;">
@@ -272,7 +363,6 @@
             </tr>
           </thead>
           <tbody>
-            <!-- แถวที่ 1: จังหวะ -->
             <tr>
               <td class="fw-bold text-start bg-light">1. จังหวะ</td>
               <td class="rubric-cell" data-row="rhythm" data-level="1" onclick="selectRubric(this, 'rhythm', 1)">ร้องไม่ตรงจังหวะ</td>
@@ -280,7 +370,6 @@
               <td class="rubric-cell" data-row="rhythm" data-level="3" onclick="selectRubric(this, 'rhythm', 3)">ร้องตรงจังหวะ แต่มีผิดบ้าง ไม่เกิน 2 จุด</td>
               <td class="rubric-cell" data-row="rhythm" data-level="4" onclick="selectRubric(this, 'rhythm', 4)">ร้องตรงจังหวะ ไม่ผิดเลย</td>
             </tr>
-            <!-- แถวที่ 2: ทำนอง -->
             <tr>
               <td class="fw-bold text-start bg-light">2. ทำนอง</td>
               <td class="rubric-cell" data-row="melody" data-level="1" onclick="selectRubric(this, 'melody', 1)">ร้องไม่ตรงกับทำนอง</td>
@@ -288,7 +377,6 @@
               <td class="rubric-cell" data-row="melody" data-level="3" onclick="selectRubric(this, 'melody', 3)">ร้องตรงทำนอง แต่มีผิดบ้าง ไม่เกิน 2 จุด</td>
               <td class="rubric-cell" data-row="melody" data-level="4" onclick="selectRubric(this, 'melody', 4)">ร้องตรงทำนอง ไม่ผิดเลย</td>
             </tr>
-            <!-- แถวที่ 3: การถ่ายทอดและการแสดงออก -->
             <tr>
               <td class="fw-bold text-start bg-light">3. การถ่ายทอดและการแสดงออก</td>
               <td class="rubric-cell" data-row="expression" data-level="1" onclick="selectRubric(this, 'expression', 1)">ถ่ายทอดไม่ดี แสดงออกไม่ดี ไม่มั่นใจในตัวเอง</td>
@@ -300,7 +388,6 @@
         </table>
       </div>
 
-      <!-- ปุ่มบันทึกและยืนยันการประเมิน -->
       <div class="mt-3" id="saveEvalBtnContainer">
         <button id="btnSubmitEval" onclick="confirmSubmitEvaluation()" class="btn btn-danger w-100 py-2 fw-bold" style="background-color: var(--primary-color);">
           <i class="fa-solid fa-floppy-disk me-1"></i>บันทึกและยืนยันการประเมิน
@@ -308,45 +395,297 @@
       </div>
     </div>
 
-    <!-- 🟢 RADAR CHART แสดงผลประเมิน 360 องศา (ครู/นักเรียน/ผู้ปกครอง) -->
+    <!-- Radar Chart 3 ฝ่าย ( stacked 3 คอลัมน์เต็ม) -->
     <div id="radarSection" class="card card-custom p-3 bg-white mb-4 d-none">
       <h6 class="fw-bold text-dark mb-3">
         <i class="fa-solid fa-chart-pie text-danger me-2"></i>ผลการประเมิน 3 ฝ่าย (360 Degree Feedback)
       </h6>
 
-      <div class="row g-3">
-        <div class="col-12 col-md-4">
-          <div class="border rounded-4 p-3 text-center bg-light">
-            <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-user-tie me-1"></i>1. ประเมินโดยครู</h6>
-            <div style="position: relative; height: 220px; width: 100%;"><canvas id="radarChartTeacher"></canvas></div>
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+            <h6 class="fw-bold text-danger mb-3"><i class="fa-solid fa-user-tie me-2"></i>1. ประเมินโดยครู</h6>
+            <div style="position: relative; height: 280px; width: 100%;">
+              <canvas id="radarChartTeacher"></canvas>
+            </div>
           </div>
         </div>
-        <div class="col-12 col-md-4">
-          <div class="border rounded-4 p-3 text-center bg-light">
-            <h6 class="fw-bold text-primary mb-2"><i class="fa-solid fa-user-graduate me-1"></i>2. ประเมินตนเอง (นักเรียน)</h6>
-            <div style="position: relative; height: 220px; width: 100%;"><canvas id="radarChartStudent"></canvas></div>
+
+        <div class="col-12">
+          <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+            <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-user-graduate me-2"></i>2. ประเมินตนเอง (นักเรียน)</h6>
+            <div style="position: relative; height: 280px; width: 100%;">
+              <canvas id="radarChartStudent"></canvas>
+            </div>
           </div>
         </div>
-        <div class="col-12 col-md-4">
-          <div class="border rounded-4 p-3 text-center bg-light">
-            <h6 class="fw-bold text-success mb-2"><i class="fa-solid fa-users me-1"></i>3. ประเมินโดยผู้ปกครอง</h6>
-            <div style="position: relative; height: 220px; width: 100%;"><canvas id="radarChartParent"></canvas></div>
+
+        <div class="col-12">
+          <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+            <h6 class="fw-bold text-success mb-3"><i class="fa-solid fa-users me-2"></i>3. ประเมินโดยผู้ปกครอง</h6>
+            <div style="position: relative; height: 280px; width: 100%;">
+              <canvas id="radarChartParent"></canvas>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ========================================== -->
+<!-- 👨‍👩‍👦 1. PARENT DASHBOARD VIEW (หน้าหลักผู้ปกครอง) -->
+<!-- ========================================== -->
+<div id="parentDashboardView" class="container" style="display: none; max-width: 500px;">
+  <!-- หัวข้อโปรไฟล์ผู้ปกครอง และข้อมูลบุตรหลาน -->
+  <div class="profile-header d-flex align-items-center mb-4">
+    <img id="pUserImg" src="" class="rounded-circle me-3 border border-2 border-success" width="55" height="55">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <h6 class="fw-bold mb-0 text-dark" id="pUserName">ผู้ปกครอง</h6>
+        <span class="badge bg-success rounded-pill" style="font-size: 0.65rem;">Parent</span>
+      </div>
+      <small class="text-muted d-block mt-1" id="pStudentChildInfo">นักเรียนในปกครอง: - (รหัส: - | ชั้น: -)</small>
+    </div>
+  </div>
+
+  <!-- กล่องแสดงระดับผลการเรียนรู้และเกรดของบุตรหลาน -->
+  <div class="card card-custom p-3 bg-white mb-4 shadow-sm border-start border-4 border-success">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="fw-bold text-dark m-0">
+        <i class="fa-solid fa-chart-line text-success me-2"></i>ผลการเรียนรู้ของนักเรียนในปกครอง
+      </h6>
+      <span id="pTotalWeightedScoreBadge" class="badge bg-success fs-6 px-3 py-2 rounded-pill">
+        คะแนนรวม: 0.0 / 100
+      </span>
+    </div>
+
+    <!-- แถบหัวข้อระดับการประเมิน 4 ระดับ + คอลัมน์คะแนน -->
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <div style="width: 85px;"></div>
+      <div class="flex-grow-1 row g-0 text-center small fw-bold ms-1">
+        <div class="col-3 text-danger">เริ่มต้น (1)</div>
+        <div class="col-3 text-warning">กำลังพัฒนา (2)</div>
+        <div class="col-3 text-success">สามารถ (3)</div>
+        <div class="col-3 text-primary" style="font-size: 0.7rem;">เหนือความคาดหวัง (4)</div>
+      </div>
+      <div class="text-center small fw-bold text-success" style="width: 75px;">คะแนน</div>
+    </div>
+
+    <!-- แถบความก้าวหน้า 4 วิชา -->
+    <div class="vstack gap-2">
+      <!-- 1. ร้องเพลง -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">1.ร้องเพลง</span>
+        <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+          <div id="pBarSinging" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+          <span id="pValSinging" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+        </div>
+        <span id="pScoreSinging" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 20</span>
+      </div>
+
+      <!-- 2. ตีกลอง -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">2.ตีกลอง</span>
+        <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+          <div id="pBarDrum" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+          <span id="pValDrum" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+        </div>
+        <span id="pScoreDrum" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 15</span>
+      </div>
+
+      <!-- 3. เล่นกีต้าร์ -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">3.เล่นกีต้าร์</span>
+        <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+          <div id="pBarGuitar" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+          <span id="pValGuitar" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+        </div>
+        <span id="pScoreGuitar" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 15</span>
+      </div>
+
+      <!-- 4. รวมวง -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">4.รวมวง</span>
+        <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+          <div id="pBarEnsemble" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+          <span id="pValEnsemble" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+        </div>
+        <span id="pScoreEnsemble" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 50</span>
+      </div>
+    </div>
+
+    <hr class="my-3 text-muted">
+
+    <!-- แถบสรุปเกรด 8 ระดับ -->
+    <div>
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="fw-bold small text-secondary"><i class="fa-solid fa-award me-1"></i>ระดับเกรดประเมินสรุป:</span>
+        <span id="pFinalGradeText" class="fw-bold text-success">เกรด: 0</span>
+      </div>
+      <div class="row g-1 text-center" id="pGradeSegmentsContainer">
+        <div class="col" data-pgrade="0"><div class="p-1 rounded border small fw-bold bg-light text-muted">0</div></div>
+        <div class="col" data-pgrade="1"><div class="p-1 rounded border small fw-bold bg-light text-muted">1</div></div>
+        <div class="col" data-pgrade="1.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">1.5</div></div>
+        <div class="col" data-pgrade="2"><div class="p-1 rounded border small fw-bold bg-light text-muted">2</div></div>
+        <div class="col" data-pgrade="2.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">2.5</div></div>
+        <div class="col" data-pgrade="3"><div class="p-1 rounded border small fw-bold bg-light text-muted">3</div></div>
+        <div class="col" data-pgrade="3.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">3.5</div></div>
+        <div class="col" data-pgrade="4"><div class="p-1 rounded border small fw-bold bg-light text-muted">4</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- รายการเมนูสำหรับผู้ปกครอง -->
+  <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-shapes text-success me-2"></i>เมนูการประเมินสำหรับผู้ปกครอง</h6>
+  <div class="row g-3">
+    <div class="col-12">
+      <div class="card card-custom p-3 bg-white border-start border-4 border-success" onclick="openParentSingingModule()" style="cursor:pointer;">
+        <div class="d-flex align-items-center">
+          <div class="p-3 bg-success bg-opacity-10 text-success rounded-4 me-3">
+            <i class="fa-solid fa-microphone-lines fa-2x"></i>
+          </div>
+          <div class="flex-grow-1">
+            <span class="badge bg-success mb-1" style="font-size: 0.65rem;">ประเมินผู้ปกครอง</span>
+            <h6 class="fw-bold text-dark mb-0">1. ประเมินการร้องเพลงของบุตรหลาน</h6>
+            <small class="text-muted">รับชมวิดีโอและร่วมประเมินผลการเรียนรู้ 3 ฝ่าย</small>
+          </div>
+          <i class="fa-solid fa-chevron-right text-muted ms-2"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 🎤 2. PARENT SINGING EVALUATION VIEW (หน้าประเมินของผู้ปกครอง) -->
+<!-- ========================================== -->
+<div id="parentSingingView" class="container" style="display: none; max-width: 650px;">
+  <div class="d-flex align-items-center justify-content-between bg-white p-3 rounded-4 shadow-sm mb-3">
+    <div class="d-flex align-items-center">
+      <button class="btn btn-outline-success btn-sm rounded-circle me-3" onclick="closeParentSingingModule()" style="width: 36px; height: 36px;">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <div>
+        <h6 class="fw-bold mb-0 text-dark" id="pSingingTitle"><i class="fa-solid fa-microphone-lines text-success me-2"></i>ประเมินการร้องเพลง</h6>
+        <small class="text-muted">ระบบประเมินผลการเรียนรู้ 3 ฝ่าย (สำหรับผู้ปกครอง)</small>
+      </div>
+    </div>
+    <span class="badge bg-success px-3 py-2">ผู้ปกครอง (Parent)</span>
+  </div>
+
+  <!-- สถานะแจ้งเตือนการประเมินของผู้ปกครอง -->
+  <div id="pEvalStatusAlert" class="alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2">
+    <i class="fa-solid fa-triangle-exclamation fs-4"></i>
+    <div>
+      <strong id="pEvalAlertTitle">ยังไม่ได้ประเมิน</strong>
+      <div class="small" id="pEvalAlertDesc">กรุณารับชมวิดีโอและให้คะแนนในตาราง Rubric ด้านล่าง</div>
+    </div>
+  </div>
+
+  <!-- กล่องแสดงวิดีโอของบุตรหลาน -->
+  <div id="pLatestVideoCard" class="card card-custom p-3 bg-white mb-3 text-center">
+    <h6 class="fw-bold text-dark mb-2">
+      <i class="fa-solid fa-circle-play text-success me-2"></i>วิดีโอการร้องเพลงของบุตรหลาน
+    </h6>
+    <div id="pVideoContainer" class="ratio ratio-16x9 rounded-4 overflow-hidden border border-1 border-success border-opacity-25 shadow-sm d-none">
+      <iframe id="pVideoPlayerFrame" src="" allow="autoplay" allowfullscreen style="border: 0;"></iframe>
+    </div>
+    <div id="pNoVideoAlert" class="p-3 bg-light rounded-4 text-muted small d-none">
+      <i class="fa-solid fa-video-slash me-1 text-secondary"></i>ยังไม่พบวิดีโอการร้องเพลง (นักเรียนยังไม่ได้อัปโหลดคลิป)
+    </div>
+  </div>
+
+  <!-- ตาราง Rubric ประเมินสำหรับผู้ปกครอง -->
+  <div class="card card-custom border-0 p-3 bg-white mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="fw-bold text-dark mb-0" style="font-size: 0.85rem;">
+        <i class="fa-solid fa-list-check text-success me-1"></i>เกณฑ์การประเมินการร้องเพลง (Rubric)
+      </h6>
+      <small class="text-muted">* กดเลือกช่องประเมินในแต่ละแถว</small>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-sm text-center align-middle mb-0" style="font-size: 0.75rem;">
+        <thead class="table-success">
+          <tr>
+            <th style="width: 25%;">ประเด็นการประเมิน</th>
+            <th style="width: 18.75%;">เริ่มต้น (1)</th>
+            <th style="width: 18.75%;">กำลังพัฒนา (2)</th>
+            <th style="width: 18.75%;">สามารถ (3)</th>
+            <th style="width: 18.75%;">เหนือความคาดหวัง (4)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-bold text-start bg-light">1. จังหวะ</td>
+            <td class="rubric-cell p-rubric" data-prow="rhythm" data-plevel="1" onclick="selectParentRubric(this, 'rhythm', 1)">ร้องไม่ตรงจังหวะ</td>
+            <td class="rubric-cell p-rubric" data-prow="rhythm" data-plevel="2" onclick="selectParentRubric(this, 'rhythm', 2)">ร้องตรงจังหวะ แต่ผิด 3-8 จุด</td>
+            <td class="rubric-cell p-rubric" data-prow="rhythm" data-plevel="3" onclick="selectParentRubric(this, 'rhythm', 3)">ร้องตรงจังหวะ แต่มีผิดบ้าง ไม่เกิน 2 จุด</td>
+            <td class="rubric-cell p-rubric" data-prow="rhythm" data-plevel="4" onclick="selectParentRubric(this, 'rhythm', 4)">ร้องตรงจังหวะ ไม่ผิดเลย</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-start bg-light">2. ทำนอง</td>
+            <td class="rubric-cell p-rubric" data-prow="melody" data-plevel="1" onclick="selectParentRubric(this, 'melody', 1)">ร้องไม่ตรงกับทำนอง</td>
+            <td class="rubric-cell p-rubric" data-prow="melody" data-plevel="2" onclick="selectParentRubric(this, 'melody', 2)">ร้องตรงทำนอง แต่ผิด 3-8 จุด</td>
+            <td class="rubric-cell p-rubric" data-prow="melody" data-plevel="3" onclick="selectParentRubric(this, 'melody', 3)">ร้องตรงทำนอง แต่มีผิดบ้าง ไม่เกิน 2 จุด</td>
+            <td class="rubric-cell p-rubric" data-prow="melody" data-plevel="4" onclick="selectParentRubric(this, 'melody', 4)">ร้องตรงทำนอง ไม่ผิดเลย</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-start bg-light">3. การถ่ายทอดและการแสดงออก</td>
+            <td class="rubric-cell p-rubric" data-prow="expression" data-plevel="1" onclick="selectParentRubric(this, 'expression', 1)">ถ่ายทอดไม่ดี แสดงออกไม่ดี ไม่มั่นใจในตัวเอง</td>
+            <td class="rubric-cell p-rubric" data-prow="expression" data-plevel="2" onclick="selectParentRubric(this, 'expression', 2)">ถ่ายทอดไม่ดี แสดงออกดี ประหม่าเล็กน้อย</td>
+            <td class="rubric-cell p-rubric" data-prow="expression" data-plevel="3" onclick="selectParentRubric(this, 'expression', 3)">ถ่ายทอดได้ดี แต่แสดงออกไม่ได้ดี ไม่เข้ากับเพลง</td>
+            <td class="rubric-cell p-rubric" data-prow="expression" data-plevel="4" onclick="selectParentRubric(this, 'expression', 4)">ถ่ายทอดได้ดี แสดงออกได้ดี เหมาะสมกับเพลง</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-3" id="pSaveEvalBtnContainer">
+      <button id="pBtnSubmitEval" onclick="confirmSubmitParentEvaluation()" class="btn btn-success w-100 py-2 fw-bold">
+        <i class="fa-solid fa-floppy-disk me-1"></i>บันทึกและยืนยันการประเมิน (ผู้ปกครอง)
+      </button>
+    </div>
+  </div>
+
+  <!-- Radar Chart ผลประเมิน 3 ฝ่าย -->
+  <div id="pRadarSection" class="card card-custom p-3 bg-white mb-4 d-none">
+    <h6 class="fw-bold text-dark mb-3">
+      <i class="fa-solid fa-chart-pie text-success me-2"></i>ผลการประเมิน 3 ฝ่าย (360 Degree Feedback)
+    </h6>
+    <div class="row g-4">
+      <div class="col-12">
+        <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+          <h6 class="fw-bold text-danger mb-3"><i class="fa-solid fa-user-tie me-2"></i>1. ประเมินโดยครู</h6>
+          <div style="position: relative; height: 280px; width: 100%;"><canvas id="pRadarChartTeacher"></canvas></div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+          <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-user-graduate me-2"></i>2. ประเมินตนเอง (นักเรียน)</h6>
+          <div style="position: relative; height: 280px; width: 100%;"><canvas id="pRadarChartStudent"></canvas></div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="border rounded-4 p-3 text-center bg-light shadow-sm">
+          <h6 class="fw-bold text-success mb-3"><i class="fa-solid fa-users me-2"></i>3. ประเมินโดยผู้ปกครอง</h6>
+          <div style="position: relative; height: 280px; width: 100%;"><canvas id="pRadarChartParent"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
     // ==========================================
-    // ⚙️ CONFIGURATION FOR FIREBASE HOSTING
+    // ⚙️ CONFIGURATION & GLOBAL VARIABLES
     // ==========================================
-    const IS_DEV = false; // 🔴 ปรับเป็น false เพื่อรันใช้งานผ่าน LINE จริง
+    const IS_DEV = false; // 👈 เปลี่ยนเป็น false เมื่อใช้งานจริง
+    const DEV_ROLE = "Student"; // 👈 เปลี่ยนเป็น "Teacher", "Student", หรือ "Parent" เพื่อทดสอบ
+    const DEV_STUDENT_ID = "08804"; // 👈 ใส่รหัสนักเรียนสำหรับทดสอบดึงข้อมูล
     const LIFF_ID = "2012217753-jKG877EO";
-    
-    // 🔴 วาง URL ที่ได้จาก Google Apps Script (ที่ลงท้ายด้วย /exec)
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyeSwvNSfHtXULSvj_QLLYACKYfZ2Yf0T4Aqa3fFroDF3ugCxJ-1oYRItsZzkAyAqIa/exec";
 
     const MOCK_PROFILE = {
@@ -361,7 +700,6 @@
     let currentTargetStudentCode = null;
     let currentSubmissionId = null;
 
-    // สถานะคะแนนที่เลือกใน Rubric
     let selectedScores = { rhythm: 0, melody: 0, expression: 0 };
     let isCurrentEvaluationLocked = false;
 
@@ -373,8 +711,19 @@
     let mediaRecorder = null;
     let recordedChunks = [];
     let isRecording = false;
+    // ==========================================
+    // 👨‍👩‍👦 PARENT MODULE LOGIC (แยกส่วนเฉพาะผู้ปกครอง)
+    // ==========================================
+    let parentSelectedScores = { rhythm: 0, melody: 0, expression: 0 };
+    let isParentEvalLocked = false;
+    let pChartTeacherInstance = null;
+    let pChartStudentInstance = null;
+    let pChartParentInstance = null;
 
-async function apiCall(action, payload = {}) {
+    // ==========================================
+    // 🌐 CORE API & INITIALIZATION
+    // ==========================================
+    async function apiCall(action, payload = {}) {
       try {
         const response = await fetch(GAS_API_URL, {
           method: "POST",
@@ -397,10 +746,44 @@ async function apiCall(action, payload = {}) {
       }
     });
 
+    // 🟢 แก้ไขฟังก์ชัน runDevMode ใน public/index.html
     async function runDevMode() {
-      currentUserProfile = MOCK_PROFILE;
-      const res = await apiCall("verifyAndLogAccess", MOCK_PROFILE);
-      handleVerifyResponse(res);
+      console.log(`🛠️ รันในโหมด DEV (บทบาท: ${DEV_ROLE} | รหัสนักเรียนที่ตรวจสอบ: ${DEV_STUDENT_ID})`);
+      
+      let fetchedFullName = `นักเรียนรหัส ${DEV_STUDENT_ID}`;
+      let fetchedClassRoom = "1";
+
+      // ดึงข้อมูลชื่อจริงของนักเรียนจาก Sheet list ตาม DEV_STUDENT_ID
+      const resStudent = await apiCall("getStudentInfo", { studentCode: DEV_STUDENT_ID });
+      if (resStudent && resStudent.success && resStudent.student) {
+        fetchedFullName = resStudent.student.fullName;
+        fetchedClassRoom = resStudent.student.classRoom;
+      }
+
+      currentUserProfile = {
+        userId: "U_MOCK_DEV_USER_001",
+        displayName: `ทดสอบ ${DEV_ROLE} (Dev)`,
+        pictureUrl: "https://via.placeholder.com/70/d63384/ffffff?text=DEV"
+      };
+
+      // 🟢 เช็กบทบาทและกำหนดชื่อผู้ใช้ + ผูกรหัสนักเรียนให้ตรงกัน
+      currentUserData = {
+        userId: currentUserProfile.userId,
+        displayName: currentUserProfile.displayName,
+        pictureUrl: currentUserProfile.pictureUrl,
+        role: DEV_ROLE,
+        studentCode: DEV_STUDENT_ID, // 👈 ผูกรหัสนักเรียนไว้ใช้ค้นหาข้อมูลประเมิน
+        fullName: DEV_ROLE === "Teacher" 
+          ? "นายวิชชา ไชยกุล (ครูผู้สอน)" 
+          : (DEV_ROLE === "Parent" ? `ผู้ปกครอง (${fetchedFullName})` : fetchedFullName),
+        classRoom: fetchedClassRoom
+      };
+
+      handleVerifyResponse({
+        success: true,
+        isRegistered: true,
+        user: currentUserData
+      });
     }
 
     function initLIFF() {
@@ -426,48 +809,136 @@ async function apiCall(action, payload = {}) {
         });
     }
 
-    function handleVerifyResponse(res) {
+// 🟢 อัปเดตการ Routing ใน handleVerifyResponse
+function handleVerifyResponse(res) {
+  document.getElementById("loading").style.display = "none";
+
+  if (res && res.isRegistered) {
+    currentUserData = res.user;
+
+    if (currentUserData.role === "Teacher") {
+      // 1. หน้าสำหรับคุณครู
+      document.getElementById("teacherDashboardView").style.display = "block";
+      document.getElementById("tUserName").textContent = currentUserData.fullName || "ครูประจำวิชา";
+      document.getElementById("tUserImg").src = currentUserData.pictureUrl || MOCK_PROFILE.pictureUrl;
+      loadTeacherDashboardData();
+
+    } else if (currentUserData.role === "Parent") {
+      // 🟢 2. แยกเข้าหน้าแดชบอร์ดผู้ปกครองเฉพาะ
+      document.getElementById("parentDashboardView").style.display = "block";
+      loadParentDashboardData(currentUserData.studentCode);
+
+    } else {
+      // 3. หน้าสำหรับนักเรียน
+      document.getElementById("userImg").src = res.user.pictureUrl || MOCK_PROFILE.pictureUrl;
+      document.getElementById("userName").textContent = res.user.fullName + " (" + res.user.displayName + ")";
+      document.getElementById("userRoleBadge").textContent = "นักเรียน";
+      document.getElementById("userStudentInfo").textContent = "รหัส: " + res.user.studentCode + " | ชั้น: " + res.user.classRoom;
+      document.getElementById("mainDashboard").style.display = "block";
+      loadStudentProgressDashboard(currentUserData.studentCode);
+    }
+  } else {
+    document.getElementById("registerView").style.display = "block";
+    loadRegistrationOptions();
+  }
+}
+
+    // ==========================================
+    // 📝 REGISTRATION FORM LOGIC
+    // ==========================================
+    async function loadRegistrationOptions() {
+      const res = await apiCall("getRegistrationOptions");
+      if (res && res.success) {
+        const classSelect = document.getElementById("regClassRoom");
+        if (classSelect) {
+          classSelect.innerHTML = '<option value="">-- เลือกห้องเรียน --</option>';
+          res.classrooms.forEach(c => {
+            classSelect.innerHTML += `<option value="${c}">ห้อง ${c}</option>`;
+          });
+        }
+      }
+    }
+
+    async function onClassroomChange() {
+      const classRoom = document.getElementById("regClassRoom").value;
+      const studentSelect = document.getElementById("regStudentSelect");
+      document.getElementById("regStudentCode").value = "";
+
+      if (!classRoom) {
+        studentSelect.innerHTML = '<option value="">-- กรุณาเลือกห้องเรียนก่อน --</option>';
+        studentSelect.disabled = true;
+        return;
+      }
+
+      studentSelect.disabled = true;
+      studentSelect.innerHTML = '<option value="">-- กำลังโหลดรายชื่อ... --</option>';
+
+      const res = await apiCall("getStudentsByClassroom", { classRoom: classRoom });
+      if (res && res.success && res.students) {
+        studentSelect.innerHTML = '<option value="">-- เลือกชื่อนักเรียน --</option>';
+        res.students.forEach(s => {
+          studentSelect.innerHTML += `<option value="${s.id}" data-code="${s.id}">${s.name}</option>`;
+        });
+        studentSelect.disabled = false;
+      } else {
+        studentSelect.innerHTML = '<option value="">-- ไม่พบรายชื่อ --</option>';
+      }
+    }
+
+    function onStudentChange() {
+      const studentSelect = document.getElementById("regStudentSelect");
+      const selectedOption = studentSelect.options[studentSelect.selectedIndex];
+      const code = selectedOption ? selectedOption.getAttribute("data-code") : "";
+      document.getElementById("regStudentCode").value = code || "";
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const role = document.getElementById("regRole").value;
+      const classRoom = document.getElementById("regClassRoom").value;
+      const studentCode = document.getElementById("regStudentCode").value;
+      const studentSelect = document.getElementById("regStudentSelect");
+      const fullName = studentSelect.options[studentSelect.selectedIndex].text;
+
+      if (!studentCode) {
+        Swal.fire("ข้อมูลไม่ครบ", "กรุณาเลือกนักเรียน", "warning");
+        return;
+      }
+
+      document.getElementById("loadingText").textContent = "กำลังบันทึกการลงทะเบียน...";
+      document.getElementById("loading").style.display = "block";
+
+      const res = await apiCall("registerUser", {
+        userId: currentUserProfile.userId,
+        displayName: currentUserProfile.displayName,
+        pictureUrl: currentUserProfile.pictureUrl,
+        role: role,
+        classRoom: classRoom,
+        studentCode: studentCode,
+        fullName: fullName
+      });
+
       document.getElementById("loading").style.display = "none";
 
-      if (res && res.isRegistered) {
-        currentUserData = res.user;
-
-        if (currentUserData.role === "Teacher") {
-          // โหลดหน้าจอ Teacher Dashboard
-          document.getElementById("teacherDashboardView").style.display = "block";
-          document.getElementById("tUserName").textContent = currentUserData.fullName || "ครูประจำวิชา";
-          document.getElementById("tUserImg").src = currentUserData.pictureUrl || MOCK_PROFILE.pictureUrl;
-          loadTeacherDashboardData();
-        } else {
-          // โหลดหน้าจอ Student / Parent Dashboard
-          document.getElementById("userImg").src = res.user.pictureUrl || MOCK_PROFILE.pictureUrl;
-          document.getElementById("userName").textContent = res.user.fullName + " (" + res.user.displayName + ")";
-          document.getElementById("userRoleBadge").textContent = res.user.role === "Student" ? "นักเรียน" : "ผู้ปกครอง";
-          document.getElementById("userStudentInfo").textContent = "รหัส: " + res.user.studentCode + " | ชั้น: " + res.user.classRoom;
-          document.getElementById("mainDashboard").style.display = "block";
-        }
+      if (res && res.success) {
+        Swal.fire("สำเร็จ!", "ลงทะเบียนเรียบร้อยแล้ว", "success").then(() => {
+          handleVerifyResponse({ success: true, isRegistered: true, user: res.user });
+        });
       } else {
-        document.getElementById("regUserImg").src = (currentUserProfile && currentUserProfile.pictureUrl) ? currentUserProfile.pictureUrl : MOCK_PROFILE.pictureUrl;
-        document.getElementById("registerView").style.display = "block";
-        loadRegistrationOptions();
+        Swal.fire("ข้อผิดพลาด", res ? res.message : "ลงทะเบียนไม่สำเร็จ", "error");
       }
     }
 
     // ==========================================
     // 👨‍🏫 TEACHER DASHBOARD LOGIC
     // ==========================================
-    // 🟢 แก้ไขฟังก์ชัน loadTeacherDashboardData ใน public/index.html
     async function loadTeacherDashboardData() {
       console.log("🔍 กำลังเริ่มดึงข้อมูล Teacher Dashboard...");
-      
       const res = await apiCall("getTeacherDashboard");
-      console.log("📦 ผลลัพธ์จาก API (getTeacherDashboard):", res);
 
-      // 🔴 หากดึงข้อมูลไม่สำเร็จ ให้แสดงข้อความแจ้งเตือนในตารางทันที
       if (!res || !res.success) {
         const tbody = document.getElementById("tStudentTableBody");
         const errorMsg = res ? res.message : "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้";
-        console.error("❌ โหลดข้อมูลล้มเหลว:", errorMsg);
         tbody.innerHTML = `<tr><td colspan="8" class="py-3 text-danger fw-bold"><i class="fa-solid fa-triangle-exclamation me-1"></i>เกิดข้อผิดพลาด: ${errorMsg}</td></tr>`;
         return;
       }
@@ -482,6 +953,7 @@ async function apiCall(action, payload = {}) {
 
       renderTeacherTable(allTeacherStudents);
     }
+
     function filterTeacherTable() {
       const room = document.getElementById("tFilterClassroom").value;
       if (room === "ALL") {
@@ -532,38 +1004,134 @@ async function apiCall(action, payload = {}) {
       });
     }
 
-    function openSingingModuleForStudent(studentCode, studentName) {
+    // 🟢 ฟังก์ชันประเมินรายบุคคลสำหรับคุณครู
+    async function openSingingModuleForStudent(studentCode, studentName) {
       currentTargetStudentCode = studentCode;
+
       document.getElementById("teacherDashboardView").style.display = "none";
       document.getElementById("singingView").style.display = "block";
-      document.getElementById("singingModuleHeaderTitle").textContent = "ประเมินการร้องเพลง: " + studentName;
       document.getElementById("singingRoleBadge").textContent = "ครู (Teacher)";
-      document.getElementById("videoRecordSection").classList.add("d-none"); // ครูไม่ต้องอัดวิดีโอ
-      
+      document.getElementById("videoRecordSection").style.display = "none"; // ซ่อนส่วนกล้องอัดเมื่อครูเข้ามาประเมิน
+
+      const titleEl = document.getElementById("singingStudentName");
+      if (titleEl) {
+        titleEl.textContent = studentName ? `ประเมินการร้องเพลง: ${studentName}` : `ประเมินการร้องเพลง: รหัส ${studentCode}`;
+      }
+
       fetchAndSetupSingingEvaluation(studentCode);
+    }
+
+    // ==========================================
+    // 🎓 STUDENT / PARENT PROGRESS DASHBOARD
+    // ==========================================
+    async function loadStudentProgressDashboard(studentCode) {
+      const res = await apiCall("getStudentOverallProgress", { studentCode: studentCode });
+      
+      let scores = { 'ร้องเพลง': 0, 'ตีกลอง': 0, 'เล่นกีต้าร์': 0, 'รวมวง': 0 };
+
+      if (res && res.success && res.scores) {
+        scores = res.scores;
+      }
+
+      const updateBar = (barId, valId, score) => {
+        const barEl = document.getElementById(barId);
+        const valEl = document.getElementById(valId);
+        const percent = Math.min(100, Math.max(0, (score / 4) * 100));
+
+        if (barEl && valEl) {
+          barEl.style.width = percent + "%";
+          valEl.textContent = `${score.toFixed(2)} / 4.0`;
+
+          barEl.className = "progress-bar rounded-pill transition-all ";
+          if (score >= 3.5) barEl.classList.add("bg-primary");
+          else if (score >= 3.0) barEl.classList.add("bg-success");
+          else if (score >= 2.0) barEl.classList.add("bg-warning");
+          else if (score > 0) barEl.classList.add("bg-danger");
+          else barEl.classList.add("bg-secondary");
+        }
+      };
+
+      updateBar("barSinging", "valSinging", scores['ร้องเพลง']);
+      updateBar("barDrum", "valDrum", scores['ตีกลอง']);
+      updateBar("barGuitar", "valGuitar", scores['เล่นกีต้าร์']);
+      updateBar("barEnsemble", "valEnsemble", scores['รวมวง']);
+
+      const wSinging = (scores['ร้องเพลง'] * 20) / 4;
+      const wDrum = (scores['ตีกลอง'] * 15) / 4;
+      const wGuitar = (scores['เล่นกีต้าร์'] * 15) / 4;
+      const wEnsemble = (scores['รวมวง'] * 50) / 4;
+
+      const totalWeightedScore = wSinging + wDrum + wGuitar + wEnsemble;
+      document.getElementById("totalWeightedScoreBadge").textContent = `คะแนนรวม: ${totalWeightedScore.toFixed(1)} / 100`;
+
+      let finalGrade = "0";
+      if (totalWeightedScore >= 80) finalGrade = "4";
+      else if (totalWeightedScore >= 75) finalGrade = "3.5";
+      else if (totalWeightedScore >= 70) finalGrade = "3";
+      else if (totalWeightedScore >= 65) finalGrade = "2.5";
+      else if (totalWeightedScore >= 60) finalGrade = "2";
+      else if (totalWeightedScore >= 55) finalGrade = "1.5";
+      else if (totalWeightedScore >= 50) finalGrade = "1";
+      else finalGrade = "0";
+
+      document.getElementById("finalGradeText").textContent = `เกรด: ${finalGrade}`;
+
+      const segments = document.querySelectorAll("#gradeSegmentsContainer [data-grade]");
+      segments.forEach(seg => {
+        const gradeVal = seg.getAttribute("data-grade");
+        const innerBox = seg.querySelector("div");
+
+        if (gradeVal === finalGrade) {
+          innerBox.className = "p-1 rounded border small fw-bold bg-danger text-white shadow-sm scale-110";
+        } else {
+          innerBox.className = "p-1 rounded border small fw-bold bg-light text-muted opacity-50";
+        }
+      });
     }
 
     // ==========================================
     // 🎤 SINGING EVALUATION MODULE LOGIC
     // ==========================================
     function openSingingModule() {
-      currentTargetStudentCode = currentUserData ? currentUserData.studentCode : '';
+      currentTargetStudentCode = currentUserData ? currentUserData.studentCode : (IS_DEV ? DEV_STUDENT_ID : '');
       document.getElementById("mainDashboard").style.display = "none";
       document.getElementById("singingView").style.display = "block";
       document.getElementById("singingRoleBadge").textContent = currentUserData ? (currentUserData.role === 'Student' ? 'นักเรียน' : 'ผู้ปกครอง') : 'นักเรียน';
+      document.getElementById("videoRecordSection").style.display = "block";
       
       fetchAndSetupSingingEvaluation(currentTargetStudentCode);
     }
 
     function closeSingingModule() {
-      stopCamera();
-      document.getElementById("singingView").style.display = "none";
-      if (currentUserData && currentUserData.role === "Teacher") {
-        document.getElementById("teacherDashboardView").style.display = "block";
-        loadTeacherDashboardData();
-      } else {
-        document.getElementById("mainDashboard").style.display = "block";
+      // 1. ปิดการทำงานของกล้องสด (กรณีเปิดอัดวิดีโออยู่)
+      if (typeof stopCamera === 'function') {
+        stopCamera();
       }
+
+      // 2. ซ่อนหน้าประเมินการร้องเพลง
+      const singingView = document.getElementById("singingView");
+      if (singingView) singingView.style.display = "none";
+
+      // 3. สลับหน้าจอตามบทบาทผู้ใช้งาน (Teacher / Student / Parent)
+      if (currentUserData && currentUserData.role === "Teacher") {
+        // ถ้าเป็นครู ➔ พาเปิดกลับหน้า Teacher Dashboard พร้อมอัปเดตตาราง
+        const teacherView = document.getElementById("teacherDashboardView");
+        if (teacherView) teacherView.style.display = "block";
+        if (typeof loadTeacherDashboardData === 'function') {
+          loadTeacherDashboardData();
+        }
+      } else {
+        // ถ้าเป็นนักเรียน/ผู้ปกครอง ➔ พาเปิดกลับหน้า เมนูหลัก (Main Dashboard)
+        const mainView = document.getElementById("mainDashboard");
+        if (mainView) mainView.style.display = "block";
+        if (currentUserData && currentUserData.studentCode && typeof loadStudentProgressDashboard === 'function') {
+          loadStudentProgressDashboard(currentUserData.studentCode);
+        }
+      }
+    }
+
+    function goBackFromSinging() {
+      closeSingingModule();
     }
 
     async function fetchAndSetupSingingEvaluation(studentCode) {
@@ -584,27 +1152,39 @@ async function apiCall(action, payload = {}) {
 
       currentSubmissionId = res.latestSubmissionId;
 
-      // แสดงลิงก์วิดีโอล่าสุดถ้ามี
-      const latestCard = document.getElementById("latestVideoCard");
-      if (res.latestVideoUrl) {
-        latestCard.classList.remove("d-none");
-        document.getElementById("btnWatchLatestVideo").href = res.latestVideoUrl;
-      } else {
-        latestCard.classList.add("d-none");
+      const videoContainer = document.getElementById("videoContainer");
+      const noVideoAlert = document.getElementById("noVideoAlert");
+      const videoFrame = document.getElementById("videoPlayerFrame");
+
+      let fileId = res.latestFileId;
+      if (!fileId && res.latestVideoUrl) {
+        const match = res.latestVideoUrl.match(/[\/=]([a-zA-Z0-9_-]{25,})/);
+        if (match) fileId = match[1];
       }
 
-      // รีเซ็ตตาราง Rubric
+      if (IS_DEV && !fileId) {
+        fileId = "1e0Nse_gOz3iQBuC7sIqV3FhC4Oll_8-M"; // คลิปทดสอบในโหมด DEV
+      }
+
+      if (fileId) {
+        videoFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
+        videoContainer.classList.remove("d-none");
+        noVideoAlert.classList.add("d-none");
+      } else {
+        videoFrame.src = "";
+        videoContainer.classList.add("d-none");
+        noVideoAlert.classList.remove("d-none");
+      }
+
       resetRubricUI();
 
       if (res.isEvaluated) {
-        // 🔒 กรณีประเมินแล้ว: ล็อกตาราง และแสดงผลอ่านอย่างเดียว
         isCurrentEvaluationLocked = true;
         document.getElementById("evalStatusAlert").className = "alert alert-success rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
         document.getElementById("evalAlertTitle").textContent = "ได้รับการประเมินเรียบร้อยแล้ว";
         document.getElementById("evalAlertDesc").textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
         document.getElementById("saveEvalBtnContainer").classList.add("d-none");
 
-        // ไฮไลท์เฉพาะช่องของสิทธิ์ตนเอง
         const myScores = currentUserData.role === "Teacher" ? res.teacherScores : (currentUserData.role === "Parent" ? res.parentScores : res.studentScores);
         if (myScores) {
           applyRubricSelection('rhythm', myScores[0]);
@@ -613,7 +1193,6 @@ async function apiCall(action, payload = {}) {
         }
         lockRubricCells();
       } else {
-        // 🔓 กรณียังไม่ได้ประเมิน: เปิดให้กดประเมินได้
         isCurrentEvaluationLocked = false;
         document.getElementById("evalStatusAlert").className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
         document.getElementById("evalAlertTitle").textContent = "ยังไม่ได้ประเมิน";
@@ -621,22 +1200,18 @@ async function apiCall(action, payload = {}) {
         document.getElementById("saveEvalBtnContainer").classList.remove("d-none");
       }
 
-      // แสดง Radar Chart 360 องศา
       document.getElementById("radarSection").classList.remove("d-none");
       initThreePartyRadarCharts(res.teacherScores, res.studentScores, res.parentScores);
     }
 
-    // 🟢 กดเลือก Rubric ในตาราง (Interactive Selection)
     function selectRubric(cellElem, rowName, level) {
       if (isCurrentEvaluationLocked) return;
 
-      // ลบคลาสเลือกเดิมในแถวนั้น
       const rowCells = document.querySelectorAll(`.rubric-cell[data-row="${rowName}"]`);
       rowCells.forEach(c => {
         c.classList.remove("selected-1", "selected-2", "selected-3", "selected-4");
       });
 
-      // ใส่คลาสสีตามระดับที่เลือก
       cellElem.classList.add(`selected-${level}`);
       selectedScores[rowName] = level;
     }
@@ -659,8 +1234,17 @@ async function apiCall(action, payload = {}) {
       allCells.forEach(c => c.classList.add('locked'));
     }
 
-    // 🟢 กดยืนยันการประเมิน พร้อม SweetAlert2 ยืนยัน
     function confirmSubmitEvaluation() {
+      if (isCurrentEvaluationLocked) {
+        Swal.fire({
+          title: "ไม่สามารถบันทึกได้",
+          text: "รายการนี้ได้รับการประเมินเรียบร้อยแล้ว ไม่สามารถแก้ไขหรือบันทึกซ้ำได้",
+          icon: "warning",
+          confirmButtonColor: "#d63384"
+        });
+        return;
+      }
+
       if (selectedScores.rhythm === 0 || selectedScores.melody === 0 || selectedScores.expression === 0) {
         Swal.fire({
           title: "ข้อมูลไม่ครบถ้วน",
@@ -673,7 +1257,7 @@ async function apiCall(action, payload = {}) {
 
       Swal.fire({
         title: "ยืนยันการประเมิน?",
-        text: "เมื่อยืนยันแล้ว ไม่สามารถกดแก้ไขได้อีก",
+        text: "เมื่อยืนยันแล้ว ระบบจะทำการบันทึกและไม่สามารถกดแก้ไขได้อีก",
         icon: "question",
         showCancelButton: true,
         confirmButtonColor: "#d63384",
@@ -682,33 +1266,40 @@ async function apiCall(action, payload = {}) {
         cancelButtonText: "ยกเลิก"
       }).then(async (result) => {
         if (result.isConfirmed) {
-          document.getElementById("loadingText").textContent = "กำลังบันทึกผลการประเมิน...";
-          document.getElementById("loading").style.display = "block";
+          Swal.fire({
+            title: "กำลังบันทึกผลการประเมิน...",
+            text: "กรุณารอสักครู่ ระบบกำลังส่งข้อมูลไปยัง Google Sheets",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+          });
 
           const res = await apiCall("submitSingingEvaluation", {
             studentCode: currentTargetStudentCode,
             submissionId: currentSubmissionId || 'SUB_MANUAL',
-            role: currentUserData ? currentUserData.role : 'Student',
+            role: currentUserData ? currentUserData.role : 'Teacher',
             evaluatorName: currentUserData ? currentUserData.fullName : 'ผู้ประเมิน',
             rhythmScore: selectedScores.rhythm,
             melodyScore: selectedScores.melody,
             expressionScore: selectedScores.expression
           });
 
-          document.getElementById("loading").style.display = "none";
-
           if (res && res.success) {
-            Swal.fire("สำเร็จ!", "บันทึกการประเมินเรียบร้อยแล้ว", "success").then(() => {
+            Swal.fire({
+              title: "บันทึกสำเร็จ!",
+              text: "ระบบได้บันทึกการประเมินเรียบร้อยแล้ว",
+              icon: "success",
+              confirmButtonColor: "#d63384"
+            }).then(() => {
               fetchAndSetupSingingEvaluation(currentTargetStudentCode);
             });
           } else {
-            Swal.fire("เกิดข้อผิดพลาด", res ? res.message : "บันทึกไม่สำเร็จ", "error");
+            Swal.fire("แจ้งเตือน", res ? res.message : "บันทึกไม่สำเร็จ", "warning");
           }
         }
       });
     }
 
-    // 🟢 RADAR CHART 360 DEGREE (วงกลม 4 วงซ้อนกัน)
     function initThreePartyRadarCharts(teacherScores, studentScores, parentScores) {
       const levelLabels = ["", "เริ่มต้น", "กำลังพัฒนา", "สามารถ", "เหนือความคาดหวัง"];
       const radarLabels = ['1. จังหวะ', '2. ทำนอง', '3. การแสดงออก'];
@@ -716,22 +1307,27 @@ async function apiCall(action, payload = {}) {
       const getCommonOptions = () => ({
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: 10 },
+        layout: {
+          padding: { top: 20, bottom: 20, left: 35, right: 35 }
+        },
         plugins: { legend: { display: false } },
         scales: {
           r: {
             min: 0,
             max: 4,
-            grid: { circular: true, color: 'rgba(0, 0, 0, 0.15)' },
-            angleLines: { display: true, color: 'rgba(0, 0, 0, 0.2)' },
+            grid: { circular: true, color: 'rgba(0, 0, 0, 0.12)' },
+            angleLines: { display: true, color: 'rgba(0, 0, 0, 0.15)' },
             ticks: {
               stepSize: 1,
               display: true,
-              font: { family: 'Sarabun', size: 8 },
+              font: { family: 'Sarabun', size: 10 },
               color: '#6c757d',
               callback: function(v) { return levelLabels[v] || ''; }
             },
-            pointLabels: { font: { family: 'Sarabun', size: 10, weight: 'bold' }, color: '#333' }
+            pointLabels: {
+              font: { family: 'Sarabun', size: 12, weight: 'bold' },
+              color: '#212529'
+            }
           }
         }
       });
@@ -743,7 +1339,7 @@ async function apiCall(action, payload = {}) {
           type: 'radar',
           data: {
             labels: radarLabels,
-            datasets: [{ data: teacherScores || [0,0,0], backgroundColor: 'rgba(214, 51, 132, 0.25)', borderColor: '#d63384', borderWidth: 2, pointRadius: 4 }]
+            datasets: [{ data: teacherScores || [0,0,0], backgroundColor: 'rgba(214, 51, 132, 0.25)', borderColor: '#d63384', borderWidth: 2, pointRadius: 5 }]
           },
           options: getCommonOptions()
         });
@@ -756,7 +1352,7 @@ async function apiCall(action, payload = {}) {
           type: 'radar',
           data: {
             labels: radarLabels,
-            datasets: [{ data: studentScores || [0,0,0], backgroundColor: 'rgba(13, 110, 253, 0.25)', borderColor: '#0d6efd', borderWidth: 2, pointRadius: 4 }]
+            datasets: [{ data: studentScores || [0,0,0], backgroundColor: 'rgba(13, 110, 253, 0.25)', borderColor: '#0d6efd', borderWidth: 2, pointRadius: 5 }]
           },
           options: getCommonOptions()
         });
@@ -769,14 +1365,16 @@ async function apiCall(action, payload = {}) {
           type: 'radar',
           data: {
             labels: radarLabels,
-            datasets: [{ data: parentScores || [0,0,0], backgroundColor: 'rgba(25, 135, 84, 0.25)', borderColor: '#198754', borderWidth: 2, pointRadius: 4 }]
+            datasets: [{ data: parentScores || [0,0,0], backgroundColor: 'rgba(25, 135, 84, 0.25)', borderColor: '#198754', borderWidth: 2, pointRadius: 5 }]
           },
           options: getCommonOptions()
         });
       }
     }
 
-    // WEBCAM LOGIC
+    // ==========================================
+    // 🎥 WEBCAM LOGIC
+    // ==========================================
     async function startCamera() {
       try {
         const constraints = { video: { width: { ideal: 640 }, height: { ideal: 480 } }, audio: true };
@@ -851,6 +1449,257 @@ async function apiCall(action, payload = {}) {
       }
       isRecording = false;
     }
+
+    // 1. โหลดข้อมูลแดชบอร์ดผู้ปกครอง
+async function loadParentDashboardData(studentCode) {
+  const targetCode = studentCode || (currentUserData ? currentUserData.studentCode : DEV_STUDENT_ID);
+  
+  // อัปเดตข้อมูลผู้ปกครองและบุตรหลานในแถบโปรไฟล์
+  document.getElementById("pUserImg").src = currentUserData.pictureUrl || MOCK_PROFILE.pictureUrl;
+  document.getElementById("pUserName").textContent = currentUserData.fullName;
+  document.getElementById("pStudentChildInfo").textContent = `นักเรียนในปกครอง: ${currentUserData.fullName.replace('ผู้ปกครอง (', '').replace(')', '')} (รหัส: ${targetCode} | ชั้น: ${currentUserData.classRoom})`;
+
+  // ดึงคะแนนความก้าวหน้า
+  const res = await apiCall("getStudentOverallProgress", { studentCode: targetCode });
+  let scores = { 'ร้องเพลง': 0, 'ตีกลอง': 0, 'เล่นกีต้าร์': 0, 'รวมวง': 0 };
+  if (res && res.success && res.scores) scores = res.scores;
+
+  const updateBar = (barId, valId, score) => {
+    const barEl = document.getElementById(barId);
+    const valEl = document.getElementById(valId);
+    const percent = Math.min(100, Math.max(0, (score / 4) * 100));
+
+    if (barEl && valEl) {
+      barEl.style.width = percent + "%";
+      valEl.textContent = `${score.toFixed(2)} / 4.0`;
+      barEl.className = "progress-bar rounded-pill transition-all ";
+      if (score >= 3.5) barEl.classList.add("bg-primary");
+      else if (score >= 3.0) barEl.classList.add("bg-success");
+      else if (score >= 2.0) barEl.classList.add("bg-warning");
+      else if (score > 0) barEl.classList.add("bg-danger");
+      else barEl.classList.add("bg-secondary");
+    }
+  };
+
+  updateBar("pBarSinging", "pValSinging", scores['ร้องเพลง']);
+  updateBar("pBarDrum", "pValDrum", scores['ตีกลอง']);
+  updateBar("pBarGuitar", "pValGuitar", scores['เล่นกีต้าร์']);
+  updateBar("pBarEnsemble", "pValEnsemble", scores['รวมวง']);
+
+  const wSinging = (scores['ร้องเพลง'] * 20) / 4;
+  const wDrum = (scores['ตีกลอง'] * 15) / 4;
+  const wGuitar = (scores['เล่นกีต้าร์'] * 15) / 4;
+  const wEnsemble = (scores['รวมวง'] * 50) / 4;
+
+  document.getElementById("pScoreSinging").textContent = `${wSinging.toFixed(1)} / 20`;
+  document.getElementById("pScoreDrum").textContent = `${wDrum.toFixed(1)} / 15`;
+  document.getElementById("pScoreGuitar").textContent = `${wGuitar.toFixed(1)} / 15`;
+  document.getElementById("pScoreEnsemble").textContent = `${wEnsemble.toFixed(1)} / 50`;
+
+  const totalWeightedScore = wSinging + wDrum + wGuitar + wEnsemble;
+  document.getElementById("pTotalWeightedScoreBadge").textContent = `คะแนนรวม: ${totalWeightedScore.toFixed(1)} / 100`;
+
+  let finalGrade = "0";
+  if (totalWeightedScore >= 80) finalGrade = "4";
+  else if (totalWeightedScore >= 75) finalGrade = "3.5";
+  else if (totalWeightedScore >= 70) finalGrade = "3";
+  else if (totalWeightedScore >= 65) finalGrade = "2.5";
+  else if (totalWeightedScore >= 60) finalGrade = "2";
+  else if (totalWeightedScore >= 55) finalGrade = "1.5";
+  else if (totalWeightedScore >= 50) finalGrade = "1";
+
+  document.getElementById("pFinalGradeText").textContent = `เกรด: ${finalGrade}`;
+
+  const segments = document.querySelectorAll("#pGradeSegmentsContainer [data-pgrade]");
+  segments.forEach(seg => {
+    const gradeVal = seg.getAttribute("data-pgrade");
+    const innerBox = seg.querySelector("div");
+    if (gradeVal === finalGrade) {
+      innerBox.className = "p-1 rounded border small fw-bold bg-success text-white shadow-sm scale-110";
+    } else {
+      innerBox.className = "p-1 rounded border small fw-bold bg-light text-muted opacity-50";
+    }
+  });
+}
+
+// 2. เปิด/ปิด โมดูลการประเมินของผู้ปกครอง
+function openParentSingingModule() {
+  const targetCode = currentUserData ? currentUserData.studentCode : DEV_STUDENT_ID;
+  document.getElementById("parentDashboardView").style.display = "none";
+  document.getElementById("parentSingingView").style.display = "block";
+
+  const studentNameClean = currentUserData ? currentUserData.fullName.replace('ผู้ปกครอง (', '').replace(')', '') : 'บุตรหลาน';
+  document.getElementById("pSingingTitle").innerHTML = `<i class="fa-solid fa-microphone-lines text-success me-2"></i>ประเมินการร้องเพลง: ${studentNameClean}`;
+
+  fetchAndSetupParentSingingEvaluation(targetCode);
+}
+
+function closeParentSingingModule() {
+  document.getElementById("parentSingingView").style.display = "none";
+  document.getElementById("parentDashboardView").style.display = "block";
+  loadParentDashboardData(currentUserData ? currentUserData.studentCode : DEV_STUDENT_ID);
+}
+
+// 3. ดึงข้อมูลวิดีโอและสถานะการประเมินของผู้ปกครอง
+async function fetchAndSetupParentSingingEvaluation(studentCode) {
+  document.getElementById("loadingText").textContent = "กำลังดึงข้อมูลการประเมินของผู้ปกครอง...";
+  document.getElementById("loading").style.display = "block";
+
+  const res = await apiCall("getSingingEvaluationStatus", {
+    studentCode: studentCode,
+    role: "Parent"
+  });
+
+  document.getElementById("loading").style.display = "none";
+
+  if (!res || !res.success) {
+    Swal.fire("ข้อผิดพลาด", "ไม่สามารถดึงข้อมูลประเมินได้", "error");
+    return;
+  }
+
+  const videoContainer = document.getElementById("pVideoContainer");
+  const noVideoAlert = document.getElementById("pNoVideoAlert");
+  const videoFrame = document.getElementById("pVideoPlayerFrame");
+
+  let fileId = res.latestFileId;
+  if (!fileId && res.latestVideoUrl) {
+    const match = res.latestVideoUrl.match(/[\/=]([a-zA-Z0-9_-]{25,})/);
+    if (match) fileId = match[1];
+  }
+
+  if (IS_DEV && !fileId) fileId = "1e0Nse_gOz3iQBuC7sIqV3FhC4Oll_8-M";
+
+  if (fileId) {
+    videoFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
+    videoContainer.classList.remove("d-none");
+    noVideoAlert.classList.add("d-none");
+  } else {
+    videoFrame.src = "";
+    videoContainer.classList.add("d-none");
+    noVideoAlert.classList.remove("d-none");
+  }
+
+  // รีเซ็ตการเลือก Rubric ของผู้ปกครอง
+  parentSelectedScores = { rhythm: 0, melody: 0, expression: 0 };
+  document.querySelectorAll('.p-rubric').forEach(c => c.classList.remove("selected-1", "selected-2", "selected-3", "selected-4", "locked"));
+
+  if (res.isEvaluated) {
+    isParentEvalLocked = true;
+    document.getElementById("pEvalStatusAlert").className = "alert alert-success rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
+    document.getElementById("pEvalAlertTitle").textContent = "ผู้ปกครองประเมินเรียบร้อยแล้ว";
+    document.getElementById("pEvalAlertDesc").textContent = "ขอบคุณสำหรับการประเมินผลการเรียนรู้ของนักเรียน";
+    document.getElementById("pSaveEvalBtnContainer").classList.add("d-none");
+
+    if (res.parentScores) {
+      ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
+        const lvl = res.parentScores[idx];
+        const cell = document.querySelector(`.p-rubric[data-prow="${row}"][data-plevel="${lvl}"]`);
+        if (cell) cell.classList.add(`selected-${lvl}`);
+      });
+    }
+    document.querySelectorAll('.p-rubric').forEach(c => c.classList.add('locked'));
+  } else {
+    isParentEvalLocked = false;
+    document.getElementById("pEvalStatusAlert").className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
+    document.getElementById("pEvalAlertTitle").textContent = "ยังไม่ได้ประเมิน";
+    document.getElementById("pEvalAlertDesc").textContent = "กรุณารับชมวิดีโอและกดเลือกเกณฑ์ในตารางด้านล่างเพื่อประเมิน";
+    document.getElementById("pSaveEvalBtnContainer").classList.remove("d-none");
+  }
+
+  document.getElementById("pRadarSection").classList.remove("d-none");
+  initParentRadarCharts(res.teacherScores, res.studentScores, res.parentScores);
+}
+
+// 4. การเลือก Rubric ของผู้ปกครอง
+function selectParentRubric(cellElem, rowName, level) {
+  if (isParentEvalLocked) return;
+
+  const rowCells = document.querySelectorAll(`.p-rubric[data-prow="${rowName}"]`);
+  rowCells.forEach(c => c.classList.remove("selected-1", "selected-2", "selected-3", "selected-4"));
+
+  cellElem.classList.add(`selected-${level}`);
+  parentSelectedScores[rowName] = level;
+}
+
+// 5. บันทึกผลการประเมินของผู้ปกครอง
+function confirmSubmitParentEvaluation() {
+  if (isParentEvalLocked) return;
+
+  if (parentSelectedScores.rhythm === 0 || parentSelectedScores.melody === 0 || parentSelectedScores.expression === 0) {
+    Swal.fire("ข้อมูลไม่ครบถ้วน", "กรุณากดเลือกเกณฑ์ประเมินให้ครบทั้ง 3 ด้าน", "warning");
+    return;
+  }
+
+  Swal.fire({
+    title: "ยืนยันการประเมิน (ผู้ปกครอง)?",
+    text: "เมื่อบันทึกแล้ว จะไม่สามารถแก้ไขได้อีก",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#198754",
+    confirmButtonText: "บันทึกข้อมูล",
+    cancelButtonText: "ยกเลิก"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "กำลังบันทึกผลการประเมิน...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const res = await apiCall("submitSingingEvaluation", {
+        studentCode: currentUserData ? currentUserData.studentCode : DEV_STUDENT_ID,
+        submissionId: 'SUB_MANUAL',
+        role: 'Parent',
+        evaluatorName: currentUserData ? currentUserData.fullName : 'ผู้ปกครอง',
+        rhythmScore: parentSelectedScores.rhythm,
+        melodyScore: parentSelectedScores.melody,
+        expressionScore: parentSelectedScores.expression
+      });
+
+      if (res && res.success) {
+        Swal.fire("สำเร็จ!", "บันทึกการประเมินของผู้ปกครองเรียบร้อยแล้ว", "success").then(() => {
+          fetchAndSetupParentSingingEvaluation(currentUserData ? currentUserData.studentCode : DEV_STUDENT_ID);
+        });
+      } else {
+        Swal.fire("แจ้งเตือน", res ? res.message : "บันทึกไม่สำเร็จ", "warning");
+      }
+    }
+  });
+}
+
+// 6. วาด Radar Chart สำหรับหน้าผู้ปกครอง
+function initParentRadarCharts(tScores, sScores, pScores) {
+  const levelLabels = ["", "เริ่มต้น", "กำลังพัฒนา", "สามารถ", "เหนือความคาดหวัง"];
+  const radarLabels = ['1. จังหวะ', '2. ทำนอง', '3. การแสดงออก'];
+
+  const getOptions = () => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { top: 20, bottom: 20, left: 35, right: 35 } },
+    plugins: { legend: { display: false } },
+    scales: {
+      r: {
+        min: 0, max: 4,
+        grid: { circular: true, color: 'rgba(0, 0, 0, 0.12)' },
+        ticks: { stepSize: 1, callback: v => levelLabels[v] || '' },
+        pointLabels: { font: { family: 'Sarabun', size: 12, weight: 'bold' } }
+      }
+    }
+  });
+
+  if (pChartTeacherInstance) pChartTeacherInstance.destroy();
+  if (pChartStudentInstance) pChartStudentInstance.destroy();
+  if (pChartParentInstance) pChartParentInstance.destroy();
+
+  const ctxT = document.getElementById('pRadarChartTeacher');
+  if (ctxT) pChartTeacherInstance = new Chart(ctxT.getContext('2d'), { type: 'radar', data: { labels: radarLabels, datasets: [{ data: tScores || [0,0,0], backgroundColor: 'rgba(214, 51, 132, 0.25)', borderColor: '#d63384', borderWidth: 2 }] }, options: getOptions() });
+
+  const ctxS = document.getElementById('pRadarChartStudent');
+  if (ctxS) pChartStudentInstance = new Chart(ctxS.getContext('2d'), { type: 'radar', data: { labels: radarLabels, datasets: [{ data: sScores || [0,0,0], backgroundColor: 'rgba(13, 110, 253, 0.25)', borderColor: '#0d6efd', borderWidth: 2 }] }, options: getOptions() });
+
+  const ctxP = document.getElementById('pRadarChartParent');
+  if (ctxP) pChartParentInstance = new Chart(ctxP.getContext('2d'), { type: 'radar', data: { labels: radarLabels, datasets: [{ data: pScores || [0,0,0], backgroundColor: 'rgba(25, 135, 84, 0.25)', borderColor: '#198754', borderWidth: 2 }] }, options: getOptions() });
+}
   </script>
 </body>
 </html>
