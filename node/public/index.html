@@ -2299,6 +2299,11 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
     if (match) fileId = match[1];
   }
 
+  // 🟢 เพิ่มบรรทัดนี้: รองรับคลิปตัวอย่างในโหมด DEV สำหรับ ตีกลอง / กีต้าร์ / รวมวง
+  if (IS_DEV && !fileId) {
+    fileId = "1e0Nse_gOz3iQBuC7sIqV3FhC4Oll_8-M";
+  }
+
   if (fileId && videoContainer && videoFrame && noVideoAlert) {
     videoFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
     videoContainer.classList.remove("d-none");
@@ -2308,13 +2313,13 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
     noVideoAlert.classList.remove("d-none");
   }
 
-  // 🟢 2. ปลดซ่อนกล่อง Radar Chart (เอา d-none ออก)
+  // 2. ปลดซ่อนกล่อง Radar Chart
   const radarSection = document.getElementById(`${prefix}RadarSection`);
   if (radarSection) {
     radarSection.classList.remove("d-none");
   }
 
-  // 🟢 3. สั่งวาด Radar Chart 3 ฝ่ายสำหรับวิชาตีกลอง
+  // 3. วาด Radar Chart สำหรับวิชาตีกลอง
   if (prefix === 'drum' && typeof initDrumRadarCharts === 'function') {
     initDrumRadarCharts(
       res.teacherScores || [0,0,0], 
