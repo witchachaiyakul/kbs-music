@@ -1254,27 +1254,28 @@
 function handleVerifyResponse(res) {
   document.getElementById("loading").style.display = "none";
 
-  if (res && res.isRegistered) {
+  if (res && res.isRegistered && res.user) {
     currentUserData = res.user;
 
+    // ซ่อนหน้าลงทะเบียน
+    const regView = document.getElementById("registerView");
+    if (regView) regView.style.display = "none";
+
     if (currentUserData.role === "Teacher") {
-      // 1. หน้าสำหรับคุณครู
       document.getElementById("teacherDashboardView").style.display = "block";
       document.getElementById("tUserName").textContent = currentUserData.fullName || "ครูประจำวิชา";
-      document.getElementById("tUserImg").src = currentUserData.pictureUrl || MOCK_PROFILE.pictureUrl;
+      document.getElementById("tUserImg").src = currentUserData.pictureUrl || (typeof MOCK_PROFILE !== 'undefined' ? MOCK_PROFILE.pictureUrl : '');
       loadTeacherDashboardData();
 
     } else if (currentUserData.role === "Parent") {
-      // 🟢 2. แยกเข้าหน้าแดชบอร์ดผู้ปกครองเฉพาะ
       document.getElementById("parentDashboardView").style.display = "block";
       loadParentDashboardData(currentUserData.studentCode);
 
     } else {
-      // 3. หน้าสำหรับนักเรียน
-      document.getElementById("userImg").src = res.user.pictureUrl || MOCK_PROFILE.pictureUrl;
-      document.getElementById("userName").textContent = res.user.fullName + " (" + res.user.displayName + ")";
+      document.getElementById("userImg").src = currentUserData.pictureUrl || (typeof MOCK_PROFILE !== 'undefined' ? MOCK_PROFILE.pictureUrl : '');
+      document.getElementById("userName").textContent = currentUserData.fullName + " (" + currentUserData.displayName + ")";
       document.getElementById("userRoleBadge").textContent = "นักเรียน";
-      document.getElementById("userStudentInfo").textContent = "รหัส: " + res.user.studentCode + " | ชั้น: " + res.user.classRoom;
+      document.getElementById("userStudentInfo").textContent = "รหัส: " + currentUserData.studentCode + " | ชั้น: " + currentUserData.classRoom;
       document.getElementById("mainDashboard").style.display = "block";
       loadStudentProgressDashboard(currentUserData.studentCode);
     }
@@ -1346,42 +1347,56 @@ async function onClassroomChange() {
       document.getElementById("regStudentCode").value = code || "";
     }
 
-    async function handleRegister(e) {
-      e.preventDefault();
-      const role = document.getElementById("regRole").value;
-      const classRoom = document.getElementById("regClassRoom").value;
-      const studentCode = document.getElementById("regStudentCode").value;
-      const studentSelect = document.getElementById("regStudentSelect");
-      const fullName = studentSelect.options[studentSelect.selectedIndex].text;
+async function handleRegister(e) {
+  e.preventDefault();
+  const role = document.getElementById("regRole").value;
+  const classRoom = document.getElementById("regClassRoom").value;
+  const studentCode = document.getElementById("regStudentCode").value;
+  const studentSelect = document.getElementById("regStudentSelect");
+  const fullName = studentSelect.options[studentSelect.selectedIndex].text;
 
-      if (!studentCode) {
-        Swal.fire("ข้อมูลไม่ครบ", "กรุณาเลือกนักเรียน", "warning");
-        return;
-      }
+  if (!studentCode) {
+    Swal.fire("ข้อมูลไม่ครบ", "กรุณาเลือกนักเรียน", "warning");
+    return;
+  }
 
-      document.getElementById("loadingText").textContent = "กำลังบันทึกการลงทะเบียน...";
-      document.getElementById("loading").style.display = "block";
+  document.getElementById("loadingText").textContent = "กำลังบันทึกการลงทะเบียน...";
+  document.getElementById("loading").style.display = "block";
 
-      const res = await apiCall("registerUser", {
-        userId: currentUserProfile.userId,
-        displayName: currentUserProfile.displayName,
-        pictureUrl: currentUserProfile.pictureUrl,
-        role: role,
-        classRoom: classRoom,
-        studentCode: studentCode,
-        fullName: fullName
-      });
+  const res = await apiCall("registerUser", {
+    userId: currentUserProfile ? currentUserProfile.userId : '',
+    displayName: currentUserProfile ? currentUserProfile.displayName : '',
+    pictureUrl: currentUserProfile ? currentUserProfile.pictureUrl : '',
+    role: role,
+    classRoom: classRoom,
+    studentCode: studentCode,
+    fullName: fullName
+  });
 
-      document.getElementById("loading").style.display = "none";
+  document.getElementById("loading").style.display = "none";
 
-      if (res && res.success) {
-        Swal.fire("สำเร็จ!", "ลงทะเบียนเรียบร้อยแล้ว", "success").then(() => {
-          handleVerifyResponse({ success: true, isRegistered: true, user: res.user });
-        });
-      } else {
-        Swal.fire("ข้อผิดพลาด", res ? res.message : "ลงทะเบียนไม่สำเร็จ", "error");
-      }
-    }
+  if (res && res.success) {
+    // 🟢 สร้างข้อมูล user สำรองกรณีที่ API ฝั่ง GAS ไม่ได้คืน object user กลับมา
+    const registeredUser = res.user || {
+      userId: currentUserProfile ? currentUserProfile.userId : '',
+      displayName: currentUserProfile ? currentUserProfile.displayName : '',
+      pictureUrl: currentUserProfile ? currentUserProfile.pictureUrl : '',
+      role: role,
+      classRoom: classRoom,
+      studentCode: studentCode,
+      fullName: fullName
+    };
+
+    Swal.fire("สำเร็จ!", "ลงทะเบียนเรียบร้อยแล้ว", "success").then(() => {
+      // ซ่อนหน้าลงทะเบียน
+      document.getElementById("registerView").style.display = "none";
+      // ส่งข้อมูลเข้าหน้าแดชบอร์ดหลัก
+      handleVerifyResponse({ success: true, isRegistered: true, user: registeredUser });
+    });
+  } else {
+    Swal.fire("ข้อผิดพลาด", res ? res.message : "ลงทะเบียนไม่สำเร็จ", "error");
+  }
+}
 
     // ==========================================
     // 👨‍🏫 TEACHER DASHBOARD LOGIC
