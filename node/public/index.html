@@ -115,13 +115,31 @@
       color: #000000 !important;
     }
 
-    /* 🟢 พิกัดวางตำแหน่งภาพกลองแต่ละชิ้น (% Responsive) */
-    .pos-hihat  { top: 32%; left: 6%;  width: 22%; }
-    .pos-tom1   { top: 12%; left: 30%; width: 18%; }
-    .pos-tom2   { top: 12%; left: 52%; width: 18%; }
-    .pos-cymbal { top: 18%; left: 74%; width: 22%; }
-    .pos-snare  { top: 48%; left: 24%; width: 22%; }
-    .pos-kick   { top: 45%; left: 44%; width: 28%; z-index: 1; }
+  /* 🟢 พิกัดจัดวางกลองชุดสมบูรณ์ (9 ชิ้น) */
+
+/* 1. Kick (กระเดื่อง) - ฐานล่างตรงกลาง */
+.pos-kick { 
+  top: 50%; 
+  left: 39%; 
+  width: 28%; 
+  z-index: 1; 
+}
+
+/* 2. Tom 1, Tom 2, Tom 3 */
+.pos-tom1 { top: 16%; left: 35%; width: 18%; z-index: 2; }
+.pos-tom2 { top: 16%; left: 53%; width: 18%; z-index: 2; }
+.pos-tom3 { top: 39%; left: 63%; width: 22%; z-index: 4; } /* Floor Tom ขวาซ้อนหน้า */
+
+/* 3. Hi-Hats (ซ้ายมือ) */
+.pos-hihat      { top: 21%; left: 8%;  width: 20%; z-index: 3; } /* Open Hi-Hat สูงขึ้นหน่อย */
+.pos-closehihat { top: 50%; left: 4%;  width: 20%; z-index: 4; } /* Close Hi-Hat ซ้อนล่างซ้าย */
+
+/* 4. Cymbals (Crash แฉขวาบน / Ride แฉซ้ายบนหรือขวาสุด) */
+.pos-crash  { top: -3%;  left: 19%; width: 22%; z-index: 3; } /* Crash แฉซ้ายสูง */
+.pos-cymbal { top: 9%;  left: 69%; width: 22%; z-index: 3; } /* Ride แฉขวาสูง */
+
+/* 5. Snare (ซ้ายล่าง ยื่นมาหน้าสุด) */
+.pos-snare { top: 40%; left: 23%; width: 22%; z-index: 5; }
   </style>
 </head>
 <body>
@@ -607,50 +625,75 @@
     <!-- แท็ก Video ซ่อนสำหรับดึง Stream กล้อง -->
     <video id="drumRawWebcam" autoplay playsinline muted class="d-none"></video>
 
-    <!-- 🟢 เวทีจัดวางชิ้นส่วนกลองแบบแยกชิ้นอิสระ (Modular Drum Stage) -->
-    <div id="drumKitStage" class="drum-stage-container mx-auto mb-3 shadow-lg rounded-4 position-relative overflow-hidden bg-dark">
-      
-      <!-- ภาพพื้นหลังเวที/ห้องซ้อม (Background) -->
-      <div class="drum-stage-bg"></div>
+    <!-- 🛠️ เครื่องมือช่วยปรับตำแหน่งชิ้นส่วนกลอง (Visual Editor) -->
+<div class="card p-2 bg-dark text-white mb-2 shadow-sm">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <small class="fw-bold text-warning"><i class="fa-solid fa-arrows-up-down-left-right me-1"></i>โหมดลากวางปรับตำแหน่งกลอง (Drag & Drop Editor)</small>
+    <button onclick="exportDrumCSS()" class="btn btn-sm btn-success fw-bold"><i class="fa-solid fa-copy me-1"></i>คัดลอกโค้ด CSS สรุป</button>
+  </div>
+  <p class="text-muted small mb-0" style="font-size: 0.72rem;">* ใช้เมาส์ลากชิ้นส่วนกลองไปวางในตำแหน่งที่ต้องการ แล้วกดปุ่ม "คัดลอกโค้ด CSS สรุป" นำค่าไปวางในสไตล์ได้เลย</p>
+</div>
 
-      <!-- 1. Hi-Hat (ชิ้นที่ 1) -->
-      <div id="piece-hihat" class="drum-piece-item pos-hihat" onclick="triggerDrum('hihat')">
-        <img src="https://cdn-icons-png.flaticon.com/512/2907/2907106.png" alt="Hi-Hat" class="drum-img">
-        <div class="drum-tag bg-warning text-dark">Hi-Hat <kbd>A</kbd></div>
-      </div>
+<!-- 🟢 เวทีจัดวางชิ้นส่วนกลองแบบแยกชิ้นอิสระ (Modular Drum Stage) -->
+<div id="drumKitStage" class="drum-stage-container mx-auto mb-3 shadow-lg rounded-4 position-relative overflow-hidden bg-dark">
+  
+  <div class="drum-stage-bg"></div>
 
-      <!-- 2. Tom 1 (ชิ้นที่ 2) -->
-      <div id="piece-tom1" class="drum-piece-item pos-tom1" onclick="triggerDrum('tom1')">
-        <img src="https://cdn-icons-png.flaticon.com/512/2907/2907102.png" alt="Tom 1" class="drum-img">
-        <div class="drum-tag bg-primary text-white">Tom 1 <kbd>F</kbd></div>
-      </div>
+  <!-- 1. Open Hi-Hat (เปิดไฮแฮท - คีย์ A) -->
+  <div id="piece-hihat" class="drum-piece-item pos-hihat" onclick="triggerDrum('hihat')">
+    <img src="images/open-hi-hat.png" alt="Open Hi-Hat" class="drum-img">
+    <div class="drum-tag bg-warning text-dark">Open HH <kbd>A</kbd></div>
+  </div>
 
-      <!-- 3. Tom 2 (ชิ้นที่ 3) -->
-      <div id="piece-tom2" class="drum-piece-item pos-tom2" onclick="triggerDrum('tom2')">
-        <img src="https://cdn-icons-png.flaticon.com/512/2907/2907102.png" alt="Tom 2" class="drum-img">
-        <div class="drum-tag bg-primary text-white">Tom 2 <kbd>J</kbd></div>
-      </div>
+  <!-- 2. Close Hi-Hat (ปิดไฮแฮท - คีย์ Z) 🟢 เพิ่มใหม่ -->
+  <div id="piece-closehihat" class="drum-piece-item pos-closehihat" onclick="triggerDrum('closehihat')">
+    <img src="images/close-hi-hat.png" alt="Close Hi-Hat" class="drum-img">
+    <div class="drum-tag bg-warning text-dark">Close HH <kbd>Z</kbd></div>
+  </div>
 
-      <!-- 4. Cymbal / Crash (ชิ้นที่ 4) -->
-      <div id="piece-cymbal" class="drum-piece-item pos-cymbal" onclick="triggerDrum('cymbal')">
-        <img src="https://cdn-icons-png.flaticon.com/512/2907/2907106.png" alt="Cymbal" class="drum-img">
-        <div class="drum-tag bg-info text-dark">Cymbal <kbd>K</kbd></div>
-      </div>
+  <!-- 3. Tom 1 (ทอม 1 - คีย์ F) -->
+  <div id="piece-tom1" class="drum-piece-item pos-tom1" onclick="triggerDrum('tom1')">
+    <img src="images/tom1.png" alt="Tom 1" class="drum-img">
+    <div class="drum-tag bg-primary text-white">Tom 1 <kbd>F</kbd></div>
+  </div>
 
-      <!-- 5. Snare Drum (ชิ้นที่ 5) -->
-      <div id="piece-snare" class="drum-piece-item pos-snare" onclick="triggerDrum('snare')">
-        <img src="https://cdn-icons-png.flaticon.com/512/2907/2907102.png" alt="Snare" class="drum-img">
-        <div class="drum-tag bg-danger text-white">Snare <kbd>S</kbd></div>
-      </div>
+  <!-- 4. Tom 2 (ทอม 2 - คีย์ J) -->
+  <div id="piece-tom2" class="drum-piece-item pos-tom2" onclick="triggerDrum('tom2')">
+    <img src="images/tom2.png" alt="Tom 2" class="drum-img">
+    <div class="drum-tag bg-primary text-white">Tom 2 <kbd>J</kbd></div>
+  </div>
 
-      <!-- 6. Kick / Bass Drum (ชิ้นที่ 6) -->
-      <div id="piece-kick" class="drum-piece-item pos-kick" onclick="triggerDrum('kick')">
-        <img src="https://cdn-icons-png.flaticon.com/512/2907/2907097.png" alt="Kick" class="drum-img">
-        <div class="drum-tag bg-dark text-white border border-light">Kick <kbd>D</kbd></div>
-      </div>
+  <!-- 5. Tom 3 / Floor Tom (ทอมใหญ่ - คีย์ L) 🟢 เพิ่มใหม่ -->
+  <div id="piece-tom3" class="drum-piece-item pos-tom3" onclick="triggerDrum('tom3')">
+    <img src="images/tom3.png" alt="Tom 3" class="drum-img">
+    <div class="drum-tag bg-primary text-white">Tom 3 <kbd>L</kbd></div>
+  </div>
 
-    </div>
+  <!-- 6. Crash Cymbal (แฉฉาบแครช - คีย์ I) 🟢 เพิ่มใหม่ -->
+  <div id="piece-crash" class="drum-piece-item pos-crash" onclick="triggerDrum('crash')">
+    <img src="images/crash.png" alt="Crash" class="drum-img">
+    <div class="drum-tag bg-info text-dark">Crash <kbd>I</kbd></div>
+  </div>
 
+  <!-- 7. Ride Cymbal (แฉฉาบไรด์ - คีย์ K) -->
+  <div id="piece-cymbal" class="drum-piece-item pos-cymbal" onclick="triggerDrum('cymbal')">
+    <img src="images/ride.png" alt="Ride" class="drum-img">
+    <div class="drum-tag bg-info text-dark">Ride <kbd>K</kbd></div>
+  </div>
+
+  <!-- 8. Snare (สแนร์ - คีย์ S) -->
+  <div id="piece-snare" class="drum-piece-item pos-snare" onclick="triggerDrum('snare')">
+    <img src="images/snare.png" alt="Snare" class="drum-img">
+    <div class="drum-tag bg-danger text-white">Snare <kbd>S</kbd></div>
+  </div>
+
+  <!-- 9. Kick / Bass Drum (กระเดื่อง - คีย์ D) -->
+  <div id="piece-kick" class="drum-piece-item pos-kick" onclick="triggerDrum('kick')">
+    <img src="images/kick.png" alt="Kick" class="drum-img">
+    <div class="drum-tag bg-dark text-white border border-light">Kick <kbd>D</kbd></div>
+  </div>
+
+</div>
     <!-- ปุ่มเปิดกล้องและเริ่มอัด -->
     <div class="d-flex justify-content-center gap-2 w-100">
       <button id="btnDrumStartCam" onclick="startDrumCompositeCamera()" class="btn btn-warning text-dark fw-bold py-2 px-4 w-100">
@@ -1101,9 +1144,9 @@
     // ==========================================
     // ⚙️ CONFIGURATION & GLOBAL VARIABLES
     // ==========================================
-    const IS_DEV =false; // 👈 เปลี่ยนเป็น false เมื่อใช้งานจริง
+    const IS_DEV =true; // 👈 เปลี่ยนเป็น false เมื่อใช้งานจริง
     const DEV_ROLE = "Student"; // 👈 เปลี่ยนเป็น "Teacher", "Student", หรือ "Parent" เพื่อทดสอบ
-    const DEV_STUDENT_ID = "08804"; // 👈 ใส่รหัสนักเรียนสำหรับทดสอบดึงข้อมูล
+    const DEV_STUDENT_ID = "1"; // 👈 ใส่รหัสนักเรียนสำหรับทดสอบดึงข้อมูล
     const LIFF_ID = "2012217753-jKG877EO";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyeSwvNSfHtXULSvj_QLLYACKYfZ2Yf0T4Aqa3fFroDF3ugCxJ-1oYRItsZzkAyAqIa/exec";
 
@@ -1174,19 +1217,25 @@
     }
 
         // 🟢 ฟังก์ชันกลางสำหรับเปิดโมดูลย่อยทุกวิชา
-    function openModule(categoryName, prefix = '') {
-      currentTargetStudentCode = currentUserData ? currentUserData.studentCode : (IS_DEV ? DEV_STUDENT_ID : '');
-      
-      // 1. ล้าง UI และตัวแปรเดิมออกก่อน
-      resetSection(prefix);
-      
-      // 2. สลับหน้าจอ
-      const targetViewId = prefix ? `${prefix}View` : 'singingView';
-      showSection(targetViewId);
-      
-      // 3. ดึงข้อมูลใหม่
-      fetchAndSetupCategoryEvaluation(categoryName, currentTargetStudentCode, prefix);
+function openModule(categoryName, prefix = '') {
+  currentTargetStudentCode = currentUserData ? currentUserData.studentCode : (IS_DEV ? DEV_STUDENT_ID : '');
+  
+  resetSection(prefix);
+  
+  const targetViewId = prefix ? `${prefix}View` : 'singingView';
+  showSection(targetViewId);
+  
+  // 🟢 หากเปิดหน้าระบบกลอง ให้เปิดการทำงานระบบ Drag & Drop ทันที
+  if (prefix === 'drum') {
+    initAllDrumSounds();
+    setTimeout(makeDrumPiecesDraggable, 300); // รอ 0.3 วินาทีให้ Element แสดงผลเรียบร้อยแล้วผูก Event
+    if (typeof fetchAndSetupDrumCategoryEvaluation === 'function') {
+      fetchAndSetupDrumCategoryEvaluation(categoryName, currentTargetStudentCode, prefix);
     }
+  } else {
+    fetchAndSetupCategoryEvaluation(categoryName, currentTargetStudentCode, prefix);
+  }
+}
 
     // 🟢 ฟังก์ชันกลางสำหรับกดย้อนกลับ (Close Module)
     function closeModule(prefix = '') {
@@ -1436,6 +1485,8 @@ async function onClassroomChange() {
 
 async function handleRegister(e) {
   e.preventDefault();
+  
+  const submitBtn = document.getElementById("regSubmitBtn");
   const role = document.getElementById("regRole").value;
   const classRoom = document.getElementById("regClassRoom").value;
   const studentCode = document.getElementById("regStudentCode").value;
@@ -1447,9 +1498,18 @@ async function handleRegister(e) {
     return;
   }
 
-  document.getElementById("loadingText").textContent = "กำลังบันทึกการลงทะเบียน...";
-  document.getElementById("loading").style.display = "block";
+  // 🟢 แสดงกล่อง Loading วงกลมหมุนเต็มหน้าจอ (ป้องกันกดซ้ำและรองรับมือถือ 100%)
+  Swal.fire({
+    title: 'กำลังบันทึกข้อมูล...',
+    text: 'กรุณารอสักครู่ ระบบกำลังบันทึกการลงทะเบียน',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+      Swal.showLoading(); // แสดงวงกลมหมุนมาตรฐานของ SweetAlert
+    }
+  });
 
+  // ส่งข้อมูลลงทะเบียนไปยัง Google Apps Script
   const res = await apiCall("registerUser", {
     userId: currentUserProfile ? currentUserProfile.userId : '',
     displayName: currentUserProfile ? currentUserProfile.displayName : '',
@@ -1460,10 +1520,7 @@ async function handleRegister(e) {
     fullName: fullName
   });
 
-  document.getElementById("loading").style.display = "none";
-
   if (res && res.success) {
-    // 🟢 สร้างข้อมูล user สำรองกรณีที่ API ฝั่ง GAS ไม่ได้คืน object user กลับมา
     const registeredUser = res.user || {
       userId: currentUserProfile ? currentUserProfile.userId : '',
       displayName: currentUserProfile ? currentUserProfile.displayName : '',
@@ -1474,10 +1531,9 @@ async function handleRegister(e) {
       fullName: fullName
     };
 
+    // ปิดหน้าต่างลงทะเบียนแล้วเข้าสู่หน้าหลัก
     Swal.fire("สำเร็จ!", "ลงทะเบียนเรียบร้อยแล้ว", "success").then(() => {
-      // ซ่อนหน้าลงทะเบียน
       document.getElementById("registerView").style.display = "none";
-      // ส่งข้อมูลเข้าหน้าแดชบอร์ดหลัก
       handleVerifyResponse({ success: true, isRegistered: true, user: registeredUser });
     });
   } else {
@@ -1678,105 +1734,121 @@ async function handleRegister(e) {
     // ==========================================
 // 🟢 ฟังก์ชันกลางดึงข้อมูลการประเมิน วิดีโอ ตาราง Rubric และ Radar Chart (ปรับปรุงความปลอดภัย DOM)
 async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix) {
+  console.log("🚀 [START] fetchAndSetupCategoryEvaluation:", { categoryName, studentCode, prefix });
+
   document.getElementById("loadingText").textContent = `กำลังดึงข้อมูลการประเมิน (${categoryName})...`;
   document.getElementById("loading").style.display = "block";
 
-  const res = await apiCall("getSingingEvaluationStatus", {
-    studentCode: studentCode,
-    category: categoryName,
-    role: currentUserData ? currentUserData.role : 'Student'
-  });
+  // 1. ดึง Element สำหรับวิดีโอมารอไว้ล่วงหน้า
+  const videoContainer = document.getElementById(`${prefix}VideoContainer`) || document.getElementById("videoContainer");
+  const noVideoAlert = document.getElementById(`${prefix}NoVideoAlert`) || document.getElementById("noVideoAlert");
+  const videoFrame = document.getElementById(`${prefix}VideoPlayerFrame`) || document.getElementById("videoPlayerFrame");
 
-  document.getElementById("loading").style.display = "none";
+  try {
+    const res = await apiCall("getSingingEvaluationStatus", {
+      studentCode: studentCode,
+      category: categoryName,
+      role: currentUserData ? currentUserData.role : 'Student'
+    });
 
-  if (!res || !res.success) {
-    Swal.fire("แจ้งเตือน", res ? res.message : `ไม่สามารถดึงข้อมูลวิชา ${categoryName} ได้`, "warning");
-    return;
-  }
+    document.getElementById("loading").style.display = "none";
+    console.log("📥 [API RESPONSE]:", res);
 
-  // 1. จัดการแสดงผลวิดีโอ (ตรวจสอบ prefix ป้องกันการหา ID พลาด)
-  const videoContainer = (prefix && document.getElementById(`${prefix}VideoContainer`)) || document.getElementById("videoContainer");
-  const noVideoAlert = (prefix && document.getElementById(`${prefix}NoVideoAlert`)) || document.getElementById("noVideoAlert");
-  const videoFrame = (prefix && document.getElementById(`${prefix}VideoPlayerFrame`)) || document.getElementById("videoPlayerFrame");
-
-  let fileId = res.latestFileId;
-  if (!fileId && res.latestVideoUrl) {
-    const match = res.latestVideoUrl.match(/[\/=]([a-zA-Z0-9_-]{25,})/);
-    if (match) fileId = match[1];
-  }
-
-  if (IS_DEV && !fileId) {
-    fileId = "1e0Nse_gOz3iQBuC7sIqV3FhC4Oll_8-M";
-  }
-
-  if (fileId && videoContainer && videoFrame && noVideoAlert) {
-    videoFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
-    videoContainer.classList.remove("d-none");
-    noVideoAlert.classList.add("d-none");
-  } else if (videoContainer && noVideoAlert) {
-    if (videoFrame) videoFrame.src = "";
-    videoContainer.classList.add("d-none");
-    noVideoAlert.classList.remove("d-none");
-  }
-
-  // 2. อัปเดตสถานะการประเมินและตาราง Rubric
-  const alertEl = (prefix && document.getElementById(`${prefix}EvalStatusAlert`)) || document.getElementById("evalStatusAlert");
-  const titleEl = (prefix && document.getElementById(`${prefix}EvalAlertTitle`)) || document.getElementById("evalAlertTitle");
-  const descEl = (prefix && document.getElementById(`${prefix}EvalAlertDesc`)) || document.getElementById("evalAlertDesc");
-  const btnContainer = (prefix && document.getElementById(`${prefix}SaveEvalBtnContainer`)) || document.getElementById("saveEvalBtnContainer");
-
-  if (prefix === 'drum') isDrumEvalLocked = false;
-  else isCurrentEvaluationLocked = false;
-
-  if (res.isEvaluated) {
-    if (prefix === 'drum') isDrumEvalLocked = true;
-    else isCurrentEvaluationLocked = true;
-
-    if (alertEl) alertEl.className = "alert alert-success rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
-    if (titleEl) titleEl.textContent = "ได้รับการประเมินเรียบร้อยแล้ว";
-    if (descEl) descEl.textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
-    if (btnContainer) btnContainer.classList.add("d-none");
-
-    const userRole = currentUserData ? currentUserData.role : 'Student';
-    const myScores = userRole === "Teacher" ? res.teacherScores : (userRole === "Parent" ? res.parentScores : res.studentScores);
-
-    if (myScores) {
-      ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
-        const lvl = myScores[idx];
-        let cell = null;
-        if (prefix) {
-          cell = document.querySelector(`.${prefix}-rubric[data-${prefix}row="${row}"][data-${prefix}level="${lvl}"]`);
-        }
-        if (!cell) {
-          cell = document.querySelector(`.rubric-cell[data-row="${row}"][data-level="${lvl}"]`);
-        }
-        if (cell) cell.classList.add(`selected-${lvl}`);
-      });
+    // กรณี API ตอบกลับล้มเหลว หรือไม่พบข้อมูล
+    if (!res || !res.success) {
+      if (videoContainer) videoContainer.classList.add("d-none");
+      if (noVideoAlert) noVideoAlert.classList.remove("d-none");
+      if (videoFrame) videoFrame.src = "";
+      Swal.fire("แจ้งเตือน", res ? res.message : `ไม่สามารถดึงข้อมูลวิชา ${categoryName} ได้`, "warning");
+      return;
     }
 
-    const cellSelector = prefix ? `.${prefix}-rubric, .rubric-cell` : `.rubric-cell`;
-    document.querySelectorAll(cellSelector).forEach(c => c.classList.add('locked'));
+    // 2. ตรวจหา File ID
+    let fileId = res.latestFileId;
+    if (!fileId && res.latestVideoUrl) {
+      const match = res.latestVideoUrl.match(/[\/=]([a-zA-Z0-9_-]{25,})/);
+      if (match) fileId = match[1];
+    }
 
-  } else {
-    if (alertEl) alertEl.className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
-    if (titleEl) titleEl.textContent = "ยังไม่ได้ประเมิน";
-    if (descEl) descEl.textContent = "กรุณารับชมวิดีโอและทำการประเมินในตารางด้านล่าง";
-    if (btnContainer) btnContainer.classList.remove("d-none");
+    // หากเป็นโหมด DEV และไม่มีคลิปใน Sheet ให้ดึงคลิปทดสอบขึ้นมาแสดง
+    if (IS_DEV && !fileId) {
+      fileId = "1e0Nse_gOz3iQBuC7sIqV3FhC4Oll_8-M";
+    }
 
-    const cellSelector = prefix ? `.${prefix}-rubric, .rubric-cell` : `.rubric-cell`;
-    document.querySelectorAll(cellSelector).forEach(c => c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4'));
-  }
+    console.log("🎬 [VIDEO FILE ID]:", fileId);
 
-  // 3. ปลดล็อกซ่อน d-none และวาด Radar Chart 3 ฝ่าย
-  const radarSection = (prefix && document.getElementById(`${prefix}RadarSection`)) || document.getElementById("radarSection");
-  if (radarSection) {
-    radarSection.classList.remove("d-none");
-  }
+    // 3. สั่งแสดงตัวเล่นวิดีโอ หรือแสดงกล่องแจ้งเตือน "ไม่พบวิดีโอ..."
+    if (fileId && videoContainer && videoFrame && noVideoAlert) {
+      videoFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
+      videoContainer.classList.remove("d-none");
+      noVideoAlert.classList.add("d-none");
+    } else if (videoContainer && noVideoAlert) {
+      if (videoFrame) videoFrame.src = "";
+      videoContainer.classList.add("d-none");
+      noVideoAlert.classList.remove("d-none");
+    }
 
-  if (prefix === 'drum' && typeof initDrumRadarCharts === 'function') {
-    initDrumRadarCharts(res.teacherScores || [0,0,0], res.studentScores || [0,0,0], res.parentScores || [0,0,0]);
-  } else if (typeof initThreePartyRadarCharts === 'function') {
-    initThreePartyRadarCharts(res.teacherScores || [0,0,0], res.studentScores || [0,0,0], res.parentScores || [0,0,0]);
+    // 4. อัปเดตตาราง Rubric & สถานะประเมิน
+    const alertEl = document.getElementById(`${prefix}EvalStatusAlert`) || document.getElementById("evalStatusAlert");
+    const titleEl = document.getElementById(`${prefix}EvalAlertTitle`) || document.getElementById("evalAlertTitle");
+    const descEl = document.getElementById(`${prefix}EvalAlertDesc`) || document.getElementById("evalAlertDesc");
+    const btnContainer = document.getElementById(`${prefix}SaveEvalBtnContainer`) || document.getElementById("saveEvalBtnContainer");
+
+    if (prefix === 'drum') isDrumEvalLocked = false;
+    else isCurrentEvaluationLocked = false;
+
+    if (res.isEvaluated) {
+      if (prefix === 'drum') isDrumEvalLocked = true;
+      else isCurrentEvaluationLocked = true;
+
+      if (alertEl) alertEl.className = "alert alert-success rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
+      if (titleEl) titleEl.textContent = "ได้รับการประเมินเรียบร้อยแล้ว";
+      if (descEl) descEl.textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
+      if (btnContainer) btnContainer.classList.add("d-none");
+
+      const userRole = currentUserData ? currentUserData.role : 'Student';
+      const myScores = userRole === "Teacher" ? res.teacherScores : (userRole === "Parent" ? res.parentScores : res.studentScores);
+
+      if (myScores) {
+        ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
+          const lvl = myScores[idx];
+          let cell = null;
+          if (prefix) cell = document.querySelector(`.${prefix}-rubric[data-${prefix}row="${row}"][data-${prefix}level="${lvl}"]`);
+          if (!cell) cell = document.querySelector(`.rubric-cell[data-row="${row}"][data-level="${lvl}"]`);
+          if (cell) cell.classList.add(`selected-${lvl}`);
+        });
+      }
+
+      const cellSelector = prefix ? `.${prefix}-rubric, .rubric-cell` : `.rubric-cell`;
+      document.querySelectorAll(cellSelector).forEach(c => c.classList.add('locked'));
+
+    } else {
+      if (alertEl) alertEl.className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
+      if (titleEl) titleEl.textContent = "ยังไม่ได้ประเมิน";
+      if (descEl) descEl.textContent = "กรุณารับชมวิดีโอและทำการประเมินในตารางด้านล่าง";
+      if (btnContainer) btnContainer.classList.remove("d-none");
+
+      const cellSelector = prefix ? `.${prefix}-rubric, .rubric-cell` : `.rubric-cell`;
+      document.querySelectorAll(cellSelector).forEach(c => c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4'));
+    }
+
+    // 5. แสดงส่วน Radar Chart และเรียกฟังก์ชันวาดกราฟ
+    const radarSection = document.getElementById(`${prefix}RadarSection`) || document.getElementById("radarSection");
+    if (radarSection) radarSection.classList.remove("d-none");
+
+    if (prefix === 'drum' && typeof initDrumRadarCharts === 'function') {
+      initDrumRadarCharts(res.teacherScores || [0,0,0], res.studentScores || [0,0,0], res.parentScores || [0,0,0]);
+    } else if ((prefix === '' || prefix === 'singing') && typeof initSingingRadarCharts === 'function') {
+      initSingingRadarCharts(res.teacherScores || [0,0,0], res.studentScores || [0,0,0], res.parentScores || [0,0,0]);
+    } else if (typeof initThreePartyRadarCharts === 'function') {
+      initThreePartyRadarCharts(res.teacherScores || [0,0,0], res.studentScores || [0,0,0], res.parentScores || [0,0,0]);
+    }
+
+  } catch (err) {
+    console.error("💥 [EXCEPTION ERROR]:", err);
+    document.getElementById("loading").style.display = "none";
+    if (videoContainer) videoContainer.classList.add("d-none");
+    if (noVideoAlert) noVideoAlert.classList.remove("d-none");
   }
 }
 
@@ -1945,80 +2017,136 @@ function initSingingRadarCharts(tScores, sScores, pScores) {
     // ==========================================
     // 🎥 WEBCAM LOGIC
     // ==========================================
-    async function startCamera() {
-      try {
-        const constraints = { video: { width: { ideal: 640 }, height: { ideal: 480 } }, audio: true };
-        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        document.getElementById("webcamPreview").srcObject = mediaStream;
-        document.getElementById("btnStartCam").classList.add("d-none");
-        document.getElementById("btnRecord").classList.remove("d-none");
-      } catch (err) { Swal.fire("ข้อผิดพลาด", "ไม่สามารถเปิดกล้องได้: " + err.message, "error"); }
+// 1. เปิดกล้องสด
+async function startCamera() {
+  try {
+    const constraints = { video: { width: { ideal: 640 }, height: { ideal: 480 } }, audio: true };
+    mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+    
+    const videoPreview = document.getElementById("webcamPreview");
+    if (videoPreview) videoPreview.srcObject = mediaStream;
+
+    // สลับปุ่มการทำงาน
+    const btnStartCam = document.getElementById("btnStartCam");
+    const btnRecord = document.getElementById("btnRecord");
+
+    if (btnStartCam) btnStartCam.classList.add("d-none");
+    if (btnRecord) {
+      btnRecord.classList.remove("d-none");
+      btnRecord.disabled = false;
+      btnRecord.innerHTML = '<i class="fa-solid fa-circle me-1 text-danger"></i>เริ่มบันทึกวิดีโอ';
     }
+  } catch (err) { 
+    Swal.fire("ข้อผิดพลาด", "ไม่สามารถเปิดกล้องได้: " + err.message, "error"); 
+  }
+}
 
-    function toggleRecording() {
-      const btnRecord = document.getElementById("btnRecord");
-      const statusBadge = document.getElementById("recordingStatus");
+// 2. สลับสถานะ อัดวิดีโอ / หยุดอัด
+function toggleRecording() {
+  const btnRecord = document.getElementById("btnRecord");
+  const statusBadge = document.getElementById("recordingStatus");
 
-      if (!isRecording) {
-        recordedChunks = [];
-        try { mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'video/webm;codecs=vp8,opus', videoBitsPerSecond: 500000 }); }
-        catch (e) { mediaRecorder = new MediaRecorder(mediaStream); }
-
-        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
-        mediaRecorder.onstop = saveRecordedVideo;
-        mediaRecorder.start();
-
-        isRecording = true;
-        btnRecord.innerHTML = '<i class="fa-solid fa-square me-1"></i>หยุดและบันทึกลง Drive';
-        statusBadge.classList.remove("d-none");
-      } else {
-        mediaRecorder.stop();
-        isRecording = false;
-        btnRecord.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>กำลังประมวลผล...';
-        btnRecord.disabled = true;
-        statusBadge.classList.add("d-none");
+  if (!isRecording) {
+    recordedChunks = [];
+    
+    // 🟢 ตรวจสอบ mimeType ที่อุปกรณ์รองรับ (รองรับทั้ง Android, PC และ iOS/Safari)
+    let options = {};
+    if (typeof MediaRecorder.isTypeSupported === 'function') {
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+        options = { mimeType: 'video/webm;codecs=vp8,opus', videoBitsPerSecond: 500000 };
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        options = { mimeType: 'video/mp4' };
       }
     }
 
-    function saveRecordedVideo() {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-      const reader = new FileReader();
-
-      reader.onloadend = async function() {
-        const base64Data = reader.result.split(',')[1];
-        document.getElementById("loadingText").textContent = "กำลังอัปโหลดวิดีโอลง Google Drive...";
-        document.getElementById("loading").style.display = "block";
-
-        const res = await apiCall("uploadSingingVideo", {
-          studentCode: currentTargetStudentCode,
-          studentName: currentUserData ? currentUserData.fullName : 'นักเรียน',
-          classRoom: currentUserData ? currentUserData.classRoom : '1',
-          category: 'ร้องเพลง',
-          mimeType: 'video/webm',
-          base64: base64Data
-        });
-
-        document.getElementById("loading").style.display = "none";
-        stopCamera();
-
-        if (res && res.success) {
-          Swal.fire("สำเร็จ!", "อัปโหลดวิดีโอลง Google Drive สำเร็จ", "success").then(() => {
-            fetchAndSetupCategoryEvaluation(currentTargetStudentCode);
-          });
-        } else {
-          Swal.fire("ข้อผิดพลาด", res ? res.message : "อัปโหลดไม่สำเร็จ", "error");
-        }
-      };
-      reader.readAsDataURL(blob);
+    try { 
+      mediaRecorder = new MediaRecorder(mediaStream, options); 
+    } catch (e) { 
+      mediaRecorder = new MediaRecorder(mediaStream); 
     }
 
-    function stopCamera() {
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-        mediaStream = null;
-      }
-      isRecording = false;
+    mediaRecorder.ondataavailable = (e) => { 
+      if (e.data && e.data.size > 0) recordedChunks.push(e.data); 
+    };
+    mediaRecorder.onstop = saveRecordedVideo;
+    mediaRecorder.start();
+
+    isRecording = true;
+    if (btnRecord) btnRecord.innerHTML = '<i class="fa-solid fa-square me-1"></i>หยุดและบันทึกลง Drive';
+    if (statusBadge) statusBadge.classList.remove("d-none");
+  } else {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
     }
+    isRecording = false;
+    if (btnRecord) {
+      btnRecord.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>กำลังประมวลผล...';
+      btnRecord.disabled = true;
+    }
+    if (statusBadge) statusBadge.classList.add("d-none");
+  }
+}
+
+// 3. แปลงไฟล์และส่งอัปโหลดไป Google Drive
+function saveRecordedVideo() {
+  const mimeType = (mediaRecorder && mediaRecorder.mimeType) ? mediaRecorder.mimeType.split(';')[0] : 'video/webm';
+  const blob = new Blob(recordedChunks, { type: mimeType });
+  const reader = new FileReader();
+
+  reader.onloadend = async function() {
+    const base64Data = reader.result.split(',')[1];
+    document.getElementById("loadingText").textContent = "กำลังอัปโหลดวิดีโอลง Google Drive...";
+    document.getElementById("loading").style.display = "block";
+
+    const res = await apiCall("uploadSingingVideo", {
+      studentCode: currentTargetStudentCode,
+      studentName: currentUserData ? currentUserData.fullName : 'นักเรียน',
+      classRoom: currentUserData ? currentUserData.classRoom : '1',
+      category: 'การร้องเพลง', // 🟢 ปรับชื่อหมวดหมู่ให้ตรงกับ Google Sheets
+      mimeType: mimeType,
+      base64: base64Data
+    });
+
+    document.getElementById("loading").style.display = "none";
+    stopCamera(); // 🟢 ปิดกล้องและคืนค่าสถานะปุ่มทั้งหมด
+
+    if (res && res.success) {
+      Swal.fire("สำเร็จ!", "อัปโหลดวิดีโอลง Google Drive สำเร็จ", "success").then(() => {
+        // 🟢 แก้ไข: ส่งพารามิเตอร์ครบ 3 ตัวเพื่อดึงข้อมูลคลิปใหม่มาแสดงผลทันที
+        fetchAndSetupCategoryEvaluation('การร้องเพลง', currentTargetStudentCode, '');
+      });
+    } else {
+      Swal.fire("ข้อผิดพลาด", res ? res.message : "อัปโหลดไม่สำเร็จ", "error");
+    }
+  };
+  reader.readAsDataURL(blob);
+}
+
+// 4. ปิดกล้องสดและคืนค่าหน้าจอ (Reset UI)
+function stopCamera() {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(track => track.stop());
+    mediaStream = null;
+  }
+  
+  const videoPreview = document.getElementById("webcamPreview");
+  if (videoPreview) videoPreview.srcObject = null;
+
+  isRecording = false;
+
+  // 🟢 คืนค่าปุ่มให้กลับสู่สถานะพร้อมเปิดกล้องใหม่
+  const btnStartCam = document.getElementById("btnStartCam");
+  const btnRecord = document.getElementById("btnRecord");
+  const statusBadge = document.getElementById("recordingStatus");
+
+  if (btnStartCam) btnStartCam.classList.remove("d-none");
+  if (btnRecord) {
+    btnRecord.classList.add("d-none");
+    btnRecord.disabled = false;
+    btnRecord.innerHTML = '<i class="fa-solid fa-circle me-1 text-danger"></i>เริ่มบันทึกวิดีโอ';
+  }
+  if (statusBadge) statusBadge.classList.add("d-none");
+}
 
     // 🟢 ฟังก์ชันโหลดและวาดความก้าวหน้าสำหรับ ผู้ปกครอง (Parent)
     async function loadParentDashboardData(studentCode) {
@@ -2299,69 +2427,116 @@ function initParentRadarCharts(tScores, sScores, pScores) {
 // 🥁 2. DRUM MODULE HANDLERS
 // ==========================================
 // 🟢 ฟังก์ชันดึงข้อมูลและเรียกวาด Radar Chart ของวิชาตีกลอง
-async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix) {
+// 🥁 ฟังก์ชันดึงข้อมูลและจัดการแสดงผลสำหรับวิชาตีกลองโดยเฉพาะ
+async function fetchAndSetupDrumCategoryEvaluation(categoryName, studentCode, prefix = 'drum') {
+  console.log("🚀 [DRUM START] fetchAndSetupDrumCategoryEvaluation:", { categoryName, studentCode, prefix });
+
   document.getElementById("loadingText").textContent = `กำลังดึงข้อมูลการประเมิน (${categoryName})...`;
   document.getElementById("loading").style.display = "block";
 
-  const res = await apiCall("getSingingEvaluationStatus", {
-    studentCode: studentCode,
-    category: categoryName,
-    role: currentUserData ? currentUserData.role : 'Student'
-  });
+  // 🟢 ดึง Element ของวิชาตีกลองโดยตรง (drumVideoContainer, drumNoVideoAlert, drumVideoPlayerFrame)
+  const videoContainer = document.getElementById("drumVideoContainer") || document.getElementById(`${prefix}VideoContainer`);
+  const noVideoAlert = document.getElementById("drumNoVideoAlert") || document.getElementById(`${prefix}NoVideoAlert`);
+  const videoFrame = document.getElementById("drumVideoPlayerFrame") || document.getElementById(`${prefix}VideoPlayerFrame`);
 
-  document.getElementById("loading").style.display = "none";
-  if (!res || !res.success) return;
+  try {
+    const res = await apiCall("getSingingEvaluationStatus", {
+      studentCode: studentCode,
+      category: categoryName,
+      role: currentUserData ? currentUserData.role : 'Student'
+    });
 
-  // 1. จัดการการแสดงผลวิดีโอ
-  const videoContainer = document.getElementById(`${prefix}VideoContainer`);
-  const noVideoAlert = document.getElementById(`${prefix}NoVideoAlert`);
-  const videoFrame = document.getElementById(`${prefix}VideoPlayerFrame`);
+    document.getElementById("loading").style.display = "none";
 
-  let fileId = res.latestFileId;
-  if (!fileId && res.latestVideoUrl) {
-    const match = res.latestVideoUrl.match(/[\/=]([a-zA-Z0-9_-]{25,})/);
-    if (match) fileId = match[1];
-  }
+    if (!res || !res.success) {
+      if (videoContainer) videoContainer.classList.add("d-none");
+      if (noVideoAlert) noVideoAlert.classList.remove("d-none");
+      if (videoFrame) videoFrame.src = "";
+      Swal.fire("แจ้งเตือน", res ? res.message : `ไม่สามารถดึงข้อมูลวิชา ${categoryName} ได้`, "warning");
+      return;
+    }
 
-  // 🟢 เพิ่มบรรทัดนี้: รองรับคลิปตัวอย่างในโหมด DEV สำหรับ ตีกลอง / กีต้าร์ / รวมวง
-  if (IS_DEV && !fileId) {
-    fileId = "1e0Nse_gOz3iQBuC7sIqV3FhC4Oll_8-M";
-  }
+    // จัดการ File ID วิดีโอ
+    let fileId = res.latestFileId;
+    if (!fileId && res.latestVideoUrl) {
+      const match = res.latestVideoUrl.match(/[\/=]([a-zA-Z0-9_-]{25,})/);
+      if (match) fileId = match[1];
+    }
 
-  if (fileId && videoContainer && videoFrame && noVideoAlert) {
-    videoFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
-    videoContainer.classList.remove("d-none");
-    noVideoAlert.classList.add("d-none");
-  } else if (videoContainer && noVideoAlert) {
-    videoContainer.classList.add("d-none");
-    noVideoAlert.classList.remove("d-none");
-  }
+    if (IS_DEV && !fileId) {
+      fileId = "1e0Nse_gOz3iQBuC7sIqV3FhC4Oll_8-M";
+    }
 
-// 🟢 แสดงและวาด Radar Chart ตามวิชา
-  const radarSection = (prefix && document.getElementById(`${prefix}RadarSection`)) || document.getElementById("radarSection");
-  if (radarSection) {
-    radarSection.classList.remove("d-none");
-  }
+    // แสดง/ซ่อน วิดีโอตีกลอง
+    if (fileId && videoContainer && videoFrame && noVideoAlert) {
+      videoFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
+      videoContainer.classList.remove("d-none");
+      noVideoAlert.classList.add("d-none");
+    } else if (videoContainer && noVideoAlert) {
+      if (videoFrame) videoFrame.src = "";
+      videoContainer.classList.add("d-none");
+      noVideoAlert.classList.remove("d-none");
+    }
 
-  if (prefix === 'drum' && typeof initDrumRadarCharts === 'function') {
-    initDrumRadarCharts(
-      res.teacherScores || [0,0,0], 
-      res.studentScores || [0,0,0], 
-      res.parentScores || [0,0,0]
-    );
-  } else if ((prefix === '' || prefix === 'singing') && typeof initSingingRadarCharts === 'function') {
-    initSingingRadarCharts(
-      res.teacherScores || [0,0,0], 
-      res.studentScores || [0,0,0], 
-      res.parentScores || [0,0,0]
-    );
+    // อัปเดตสถานะและตาราง Rubric ของกลอง
+    const alertEl = document.getElementById("drumEvalStatusAlert");
+    const titleEl = document.getElementById("drumEvalAlertTitle");
+    const descEl = document.getElementById("drumEvalAlertDesc");
+    const btnContainer = document.getElementById("drumSaveEvalBtnContainer");
+
+    isDrumEvalLocked = false;
+
+    if (res.isEvaluated) {
+      isDrumEvalLocked = true;
+      if (alertEl) alertEl.className = "alert alert-success rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
+      if (titleEl) titleEl.textContent = "ได้รับการประเมินเรียบร้อยแล้ว";
+      if (descEl) descEl.textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
+      if (btnContainer) btnContainer.classList.add("d-none");
+
+      const userRole = currentUserData ? currentUserData.role : 'Student';
+      const myScores = userRole === "Teacher" ? res.teacherScores : (userRole === "Parent" ? res.parentScores : res.studentScores);
+
+      if (myScores) {
+        ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
+          const lvl = myScores[idx];
+          const cell = document.querySelector(`.drum-rubric[data-drow="${row}"][data-dlevel="${lvl}"]`);
+          if (cell) cell.classList.add(`selected-${lvl}`);
+        });
+      }
+      document.querySelectorAll('.drum-rubric').forEach(c => c.classList.add('locked'));
+    } else {
+      if (alertEl) alertEl.className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
+      if (titleEl) titleEl.textContent = "ยังไม่ได้ประเมิน";
+      if (descEl) descEl.textContent = "กรุณารับชมวิดีโอและทำการประเมินในตารางด้านล่าง";
+      if (btnContainer) btnContainer.classList.remove("d-none");
+      document.querySelectorAll('.drum-rubric').forEach(c => c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4'));
+    }
+
+    // แสดง Radar Chart วิชาตีกลอง
+    const radarSection = document.getElementById("drumRadarSection");
+    if (radarSection) radarSection.classList.remove("d-none");
+
+    if (typeof initDrumRadarCharts === 'function') {
+      initDrumRadarCharts(
+        res.teacherScores || [0,0,0], 
+        res.studentScores || [0,0,0], 
+        res.parentScores || [0,0,0]
+      );
+    }
+
+  } catch (err) {
+    console.error("💥 [DRUM EXCEPTION ERROR]:", err);
+    document.getElementById("loading").style.display = "none";
+    if (videoContainer) videoContainer.classList.add("d-none");
+    if (noVideoAlert) noVideoAlert.classList.remove("d-none");
   }
 }
 
 //drum//
 // 1. เปิดกล้องและเริ่มรัน Canvas Rendering Loop
 async function startDrumCompositeCamera() {
-  initAudioContext(); // เปิดระบบ Web Audio API
+  initAudioContext();    // เปิด Web Audio API
+  initAllDrumSounds();   // 🟢 โหลดไฟล์เสียง MP3 ทั้งหมดลง Memory ทันทีเมื่อเปิดกล้อง
 
   try {
     const constraints = { video: { width: 640, height: 360 }, audio: true };
@@ -2370,14 +2545,12 @@ async function startDrumCompositeCamera() {
     const videoEl = document.getElementById("drumRawWebcam");
     videoEl.srcObject = mediaStream;
 
-    // เมื่อวิดีโอกล้องพร้อม ให้เริ่มวาดลง Canvas
     videoEl.onloadedmetadata = () => {
       videoEl.play();
       isCanvasLoopRunning = true;
       requestAnimationFrame(renderDrumCanvasLoop);
     };
 
-    // สลับปุ่ม
     document.getElementById("btnDrumStartCam").classList.add("d-none");
     document.getElementById("btnDrumRecord").classList.remove("d-none");
 
@@ -2478,6 +2651,56 @@ function playDrum(type) {
     osc.start(now);
     osc.stop(now + 0.3);
 
+    } else if (type === 'closehihat') {
+    // เสียง Close Hi-Hat (สั้นกว่า Open Hi-Hat)
+    const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.02, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < noiseBuffer.length; i++) output[i] = Math.random() * 2 - 1;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 8000;
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.02);
+    noise.connect(filter);
+    filter.connect(gain);
+    connectOutput(gain);
+    noise.start(audioCtx.currentTime);
+  
+    } else if (type === 'tom3') {
+    // เสียง Tom 3 (ความถี่ต่ำกว่า Tom 2)
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.setValueAtTime(90, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+    gain.gain.setValueAtTime(0.9, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+    osc.connect(gain);
+    connectOutput(gain);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.35);
+
+  } else if (type === 'crash') {
+    // เสียง Crash Cymbal (กังวานสว่าง)
+    const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 1.0, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < noiseBuffer.length; i++) output[i] = Math.random() * 2 - 1;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 4500;
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.0);
+    noise.connect(filter);
+    filter.connect(gain);
+    connectOutput(gain);
+    noise.start(audioCtx.currentTime);
+  
+
   } else if (type === 'cymbal') {
     // เสียง Cymbal
     const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.8, audioCtx.sampleRate);
@@ -2505,12 +2728,15 @@ function playDrum(type) {
 document.addEventListener('keydown', function(e) {
   if (document.getElementById("drumView") && document.getElementById("drumView").style.display !== "none") {
     const key = e.key.toLowerCase();
-    if (key === 'a') playDrum('hihat');
-    if (key === 's') playDrum('snare');
-    if (key === 'd') playDrum('kick');
-    if (key === 'f') playDrum('tom1');
-    if (key === 'j') playDrum('tom2');
-    if (key === 'k') playDrum('cymbal');
+    if (key === 'a') triggerDrum('hihat');
+    if (key === 'z') triggerDrum('closehihat'); // 🟢 เพิ่ม Close Hi-Hat
+    if (key === 's') triggerDrum('snare');
+    if (key === 'd') triggerDrum('kick');
+    if (key === 'f') triggerDrum('tom1');
+    if (key === 'j') triggerDrum('tom2');
+    if (key === 'l') triggerDrum('tom3');       // 🟢 เพิ่ม Tom 3
+    if (key === 'i') triggerDrum('crash');      // 🟢 เพิ่ม Crash
+    if (key === 'k') triggerDrum('cymbal');
   }
 });
 
@@ -2601,24 +2827,27 @@ function renderDrumCanvasLoop() {
 }
 
 // 🟢 ฟังก์ชันเล่นเสียง + ทำอนิเมชันขยายกระพริบบนชิ้นส่วนกลองที่ถูกเลือก
+// 🟢 ฟังก์ชันเล่นเสียงไฟล์ MP3 + ทำอนิเมชันขยายกระพริบบนชิ้นส่วนกลอง
 function triggerDrum(type) {
-  // 1. เล่นเสียงกลองสังเคราะห์ (Web Audio API)
-  if (typeof playDrum === 'function') {
-    playDrum(type);
+  // 1. สลับมาใช้ไฟล์เสียง MP3 ที่ Preload ไว้แทนการสังเคราะห์เสียงแบบเดิม
+  if (typeof playDrumFile === 'function') {
+    playDrumFile(type);
+  } else if (typeof playDrum === 'function') {
+    playDrum(type); // Fallback หากยังไม่ได้โหลดไฟล์
   }
 
-  // 2. บันทึกพิกัดเวลาสำหรับ Canvas Recording (ถ้ามี)
+  // 2. บันทึกพิกัดเวลาสำหรับ Canvas Recording
   if (typeof activeDrumHits !== 'undefined') {
     activeDrumHits[type] = Date.now();
   }
 
-  // 3. เรียกชิ้นส่วนกลองแยกชิ้นมาใส่คลาสการตี (hit-active)
+  // 3. ทำเอฟเฟกต์ไฟกระพริบขยายบนชิ้นส่วนกลอง
   const pieceEl = document.getElementById(`piece-${type}`) || document.getElementById(`pad-${type}`);
   if (pieceEl) {
     pieceEl.classList.add("hit-active");
     setTimeout(() => {
       pieceEl.classList.remove("hit-active");
-    }, 120); // แสดงเอฟเฟกต์กระพริบขยาย 0.12 วินาที
+    }, 120);
   }
 }
 
@@ -2717,7 +2946,7 @@ function confirmSubmitDrumEvaluation() {
 
       if (res && res.success) {
         Swal.fire("สำเร็จ!", "บันทึกการประเมินวิชาตีกลองเรียบร้อยแล้ว", "success").then(() => {
-          fetchAndSetupCategoryEvaluation('ตีกลอง', currentTargetStudentCode, 'drum');
+          fetchAndSetupDrumCategoryEvaluation('ตีกลอง', currentTargetStudentCode, 'drum');
         });
       } else {
         Swal.fire("แจ้งเตือน", res ? res.message : "บันทึกไม่สำเร็จ", "warning");
@@ -2758,6 +2987,201 @@ function initDrumRadarCharts(tScores, sScores, pScores) {
 
   const ctxP = document.getElementById('drumRadarChartParent');
   if (ctxP) drumChartParentInstance = new Chart(ctxP.getContext('2d'), { type: 'radar', data: { labels: radarLabels, datasets: [{ data: pScores || [0,0,0], backgroundColor: 'rgba(25, 135, 84, 0.25)', borderColor: '#198754', borderWidth: 2 }] }, options: getOptions() });
+}
+
+// 🟢 ระบบ Visual Drag & Drop ปรับตำแหน่งชิ้นส่วนกลอง
+// 🟢 ระบบ Drag & Drop ปรับตำแหน่งกลอง (รองรับ Mouse + Touch)
+function makeDrumPiecesDraggable() {
+  const stage = document.getElementById("drumKitStage");
+  if (!stage) return;
+
+  const items = stage.querySelectorAll(".drum-piece-item");
+  
+  items.forEach(item => {
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+
+    item.style.cursor = "move";
+    item.style.touchAction = "none"; // ป้องกันหน้าจอมือถือเลื่อนตามขณะลากรูป
+
+    // 🟢 ฟังก์ชันคำนวณการเริ่มลาก
+    function startDrag(clientX, clientY) {
+      isDragging = true;
+      item.style.zIndex = "999"; // ยกชิ้นส่วนที่ลากให้ลอยมาหน้าสุด
+
+      startX = clientX;
+      startY = clientY;
+
+      const stageRect = stage.getBoundingClientRect();
+      const itemRect = item.getBoundingClientRect();
+
+      // คำนวณตำแหน่งเริ่มต้นเป็น % ของ Stage
+      initialLeft = ((itemRect.left - stageRect.left) / stageRect.width) * 100;
+      initialTop = ((itemRect.top - stageRect.top) / stageRect.height) * 100;
+    }
+
+    // 🟢 ฟังก์ชันคำนวณขณะลากขยับ
+    function doDrag(clientX, clientY) {
+      if (!isDragging) return;
+
+      const stageRect = stage.getBoundingClientRect();
+      if (stageRect.width === 0 || stageRect.height === 0) return;
+
+      const deltaX = ((clientX - startX) / stageRect.width) * 100;
+      const deltaY = ((clientY - startY) / stageRect.height) * 100;
+
+      let newLeft = Math.round((initialLeft + deltaX) * 10) / 10;
+      let newTop = Math.round((initialTop + deltaY) * 10) / 10;
+
+      item.style.left = `${newLeft}%`;
+      item.style.top = `${newTop}%`;
+    }
+
+    // 🟢 ฟังก์ชันเมื่อปล่อยมือ/เมาส์
+    function stopDrag() {
+      isDragging = false;
+      item.style.zIndex = ""; // คืนค่า z-index
+    }
+
+    // --- EVENT LISTENERS สำหรับเมาส์ (PC) ---
+    item.onmousedown = function(e) {
+      e.stopPropagation();
+      startDrag(e.clientX, e.clientY);
+
+      document.onmousemove = function(moveEvent) {
+        doDrag(moveEvent.clientX, moveEvent.clientY);
+      };
+
+      document.onmouseup = function() {
+        stopDrag();
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
+    };
+
+    // --- EVENT LISTENERS สำหรับหน้าจอสัมผัส (มือถือ/แท็บเล็ต) ---
+    item.ontouchstart = function(e) {
+      e.stopPropagation();
+      const touch = e.touches[0];
+      startDrag(touch.clientX, touch.clientY);
+
+      document.ontouchmove = function(moveEvent) {
+        const moveTouch = moveEvent.touches[0];
+        doDrag(moveTouch.clientX, moveTouch.clientY);
+      };
+
+      document.ontouchend = function() {
+        stopDrag();
+        document.ontouchmove = null;
+        document.ontouchend = null;
+      };
+    };
+  });
+
+  console.log("✅ [DRAG & DROP] เปิดโหมดลากวางสำเร็จแล้วครับ");
+}
+
+// 🟢 ฟังก์ชันคัดลอกพิกัด CSS ทั้งหมดออกมาใช้งาน
+function exportDrumCSS() {
+  const stage = document.getElementById("drumKitStage");
+  if (!stage) return;
+
+  const items = stage.querySelectorAll(".drum-piece-item");
+  let cssResult = "/* 🟢 พิกัดจากการลากวางบนหน้าจอ */\n";
+
+  items.forEach(item => {
+    const className = Array.from(item.classList).find(c => c.startsWith("pos-"));
+    const top = item.style.top || window.getComputedStyle(item).top;
+    const left = item.style.left || window.getComputedStyle(item).left;
+    const zIndex = window.getComputedStyle(item).zIndex;
+
+    // แปลงพิกัดเป็น % ให้เรียบร้อย
+    const stageRect = stage.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    const topPercent = Math.round(((itemRect.top - stageRect.top) / stageRect.height) * 100);
+    const leftPercent = Math.round(((itemRect.left - stageRect.left) / stageRect.width) * 100);
+
+    if (className) {
+      cssResult += `.${className} { top: ${topPercent}%; left: ${leftPercent}%; z-index: ${zIndex}; }\n`;
+    }
+  });
+
+  console.log(cssResult);
+
+  // คัดลอกลง Clipboard
+  navigator.clipboard.writeText(cssResult).then(() => {
+    Swal.fire({
+      title: "คัดลอกโค้ด CSS สำเร็จ!",
+      html: `<pre class="text-start bg-dark text-warning p-3 rounded" style="font-size: 0.75rem;">${cssResult}</pre>`,
+      icon: "success"
+    });
+  });
+}
+
+// เรียกใช้งานเมื่อโหลดหน้าจอ
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(makeDrumPiecesDraggable, 1000);
+});
+
+// 🟢 1. ระบบ Preload ไฟล์เสียงกลองทั้งหมดลง Memory ล่วงหน้า
+const soundBuffers = {};
+
+// โหลดไฟล์เสียงล่วงหน้าทันทีที่โหลดหน้าเว็บ
+async function preloadDrumAudio(type, filePath) {
+  try {
+    const response = await fetch(filePath);
+    const arrayBuffer = await response.arrayBuffer();
+    // ถอดรหัสไฟล์เสียงไว้ใน RAM ทันที
+    soundBuffers[type] = await audioCtx.decodeAudioData(arrayBuffer);
+    console.log(`⚡ Preloaded audio: ${type}`);
+  } catch (err) {
+    console.error(`Failed to preload ${type}:`, err);
+  }
+}
+
+// เรียก Preload ไฟล์ทั้งหมดเมื่อเข้าหน้าระบบกลอง
+function initAllDrumSounds() {
+  initAudioContext();
+  const sounds = {
+    'kick': 'audio/kick.mp3',
+    'snare': 'audio/snare.mp3',
+    'hihat': 'audio/open-hi-hat.mp3',
+    'closehihat': 'audio/close-hi-hat.mp3',
+    'tom1': 'audio/tom1.mp3',
+    'tom2': 'audio/tom2.mp3',
+    'tom3': 'audio/tom3.mp3',
+    'crash': 'audio/crash.mp3',
+    'cymbal': 'audio/ride.mp3'
+  };
+
+  for (const [type, path] of Object.entries(sounds)) {
+    preloadDrumAudio(type, path);
+  }
+}
+
+// 🟢 ฟังก์ชันเล่นเสียงที่ผ่านการ Preload (ไม่มีอาการหน่วง 100%)
+function playDrumFile(type) {
+  if (!audioCtx) initAudioContext();
+  
+  // ปลุก AudioContext ให้ตื่นทันทีหากเบราว์เซอร์เอาไปพัก (Suspend)
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+
+  const buffer = soundBuffers[type];
+  if (!buffer) return; // หากยังโหลดไม่เสร็จให้ข้าม
+
+  const source = audioCtx.createBufferSource();
+  source.buffer = buffer;
+
+  // ส่งเสียงออกลำโพงและมิกซ์เข้าสายบันทึกวิดีโอสด
+  source.connect(audioCtx.destination);
+  if (streamDestination) {
+    source.connect(streamDestination);
+  }
+
+  // เล่นทันทีด้วยเวลา AudioContext สถิต
+  source.start(audioCtx.currentTime);
 }
   </script>
 </body>
