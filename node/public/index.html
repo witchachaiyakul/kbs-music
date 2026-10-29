@@ -235,106 +235,108 @@
     </div>
   </div>  
 
-  <!-- MAIN Student -->
-  <div id="mainDashboard" class="container" style="display: none; max-width: 500px;">
-    <div class="profile-header d-flex align-items-center mb-4">
-      <img id="userImg" src="" class="rounded-circle me-3 border border-2 border-danger" width="55" height="55">
-      <div>
-        <div class="d-flex align-items-center gap-2">
-          <h6 class="fw-bold mb-0 text-dark" id="userName">...</h6>
-          <span id="userRoleBadge" class="badge bg-danger rounded-pill" style="font-size: 0.65rem;">...</span>
+<!-- MAIN Student -->
+<div id="mainDashboard" class="container" style="display: none; max-width: 500px;">
+  
+  <!-- โปรไฟล์นักเรียน -->
+  <div class="profile-header d-flex align-items-center mb-4">
+    <img id="userImg" src="" class="rounded-circle me-3 border border-2 border-danger" width="55" height="55">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <h6 class="fw-bold mb-0 text-dark" id="userName">...</h6>
+        <span id="userRoleBadge" class="badge bg-danger rounded-pill" style="font-size: 0.65rem;">...</span>
+      </div>
+      <small class="text-muted d-block mt-1" id="userStudentInfo">รหัส: - | ชั้น: -</small>
+    </div>
+  </div>
+
+  <!-- กล่องความก้าวหน้าและเกรดสรุป -->
+  <div class="card card-custom p-3 bg-white mb-4 shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="fw-bold text-dark m-0">
+        <i class="fa-solid fa-chart-line text-danger me-2"></i>ระดับผลการเรียนรู้วิชาดนตรีสากล
+      </h6>
+      <span id="totalWeightedScoreBadge" class="badge bg-danger fs-6 px-3 py-2 rounded-pill">
+        คะแนนรวม: 0.0 / 100
+      </span>
+    </div>
+
+    <!-- แถบหัวข้อระดับการประเมิน 4 ระดับ + คอลัมน์คะแนน -->
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <div style="width: 85px;"></div>
+      <div class="flex-grow-1 row g-0 text-center small fw-bold ms-1">
+        <div class="col-3 text-danger">เริ่มต้น (1)</div>
+        <div class="col-3 text-warning">กำลังพัฒนา (2)</div>
+        <div class="col-3 text-success">สามารถ (3)</div>
+        <div class="col-3 text-primary" style="font-size: 0.7rem;">เหนือความคาดหวัง (4)</div>
+      </div>
+      <div class="text-center small fw-bold text-danger" style="width: 75px;">คะแนน</div>
+    </div>
+
+    <!-- แถบความก้าวหน้าทั้ง 4 รายวิชา -->
+    <div class="vstack gap-2">
+      <!-- 1. ร้องเพลง (เต็ม 20) -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">1.ร้องเพลง</span>
+        <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+          <div id="barSinging" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+          <span id="valSinging" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
         </div>
-        <small class="text-muted d-block mt-1" id="userStudentInfo">รหัส: - | ชั้น: -</small>
+        <span id="scoreSinging" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 20</span>
+      </div>
+
+      <!-- 2. ตีกลอง (เต็ม 15) -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">2.ตีกลอง</span>
+        <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+          <div id="barDrum" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+          <span id="valDrum" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+        </div>
+        <span id="scoreDrum" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 15</span>
+      </div>
+
+      <!-- 3. เล่นกีต้าร์ (เต็ม 15) -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">3.เล่นกีต้าร์</span>
+        <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+          <div id="barGuitar" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+          <span id="valGuitar" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+        </div>
+        <span id="scoreGuitar" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 15</span>
+      </div>
+
+      <!-- 4. รวมวง (เต็ม 50) -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">4.รวมวง</span>
+        <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
+          <div id="barEnsemble" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
+          <span id="valEnsemble" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+        </div>
+        <span id="scoreEnsemble" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 50</span>
       </div>
     </div>
 
-    <!-- กล่องความก้าวหน้าและเกรดสรุป -->
-    <div class="card card-custom p-3 bg-white mb-4 shadow-sm">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h6 class="fw-bold text-dark m-0">
-          <i class="fa-solid fa-chart-line text-danger me-2"></i>ระดับผลการเรียนรู้วิชาดนตรีสากล
-        </h6>
-        <span id="totalWeightedScoreBadge" class="badge bg-danger fs-6 px-3 py-2 rounded-pill">
-          คะแนนรวม: 0.0 / 100
-        </span>
+    <hr class="my-3 text-muted">
+
+    <!-- แถบสรุประดับเกรด 8 ช่อง -->
+    <div>
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="fw-bold small text-secondary"><i class="fa-solid fa-award me-1"></i>เกรด:</span>
+        <span id="finalGradeText" class="fw-bold text-danger">เกรด: 0</span>
       </div>
-
-<!-- แถบหัวข้อระดับการประเมิน 4 ระดับ + คอลัมน์คะแนน -->
-  <div class="d-flex align-items-center gap-2 mb-2">
-    <div style="width: 85px;"></div>
-    <div class="flex-grow-1 row g-0 text-center small fw-bold ms-1">
-      <div class="col-3 text-danger">เริ่มต้น (1)</div>
-      <div class="col-3 text-warning">กำลังพัฒนา (2)</div>
-      <div class="col-3 text-success">สามารถ (3)</div>
-      <div class="col-3 text-primary" style="font-size: 0.7rem;">เหนือความคาดหวัง (4)</div>
-    </div>
-    <div class="text-center small fw-bold text-danger" style="width: 75px;">คะแนน</div>
-  </div>
-
-  <!-- แถบความก้าวหน้าทั้ง 4 รายวิชา + ช่องคะแนนเต็ม -->
-  <div class="vstack gap-2">
-    <!-- 1. ร้องเพลง (เต็ม 20) -->
-    <div class="d-flex align-items-center gap-2">
-      <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">1.ร้องเพลง</span>
-      <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
-        <div id="barSinging" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
-        <span id="valSinging" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
+      
+      <div class="row g-1 text-center" id="gradeSegmentsContainer">
+        <div class="col" data-grade="0"><div class="p-1 rounded border small fw-bold bg-light text-muted">0</div></div>
+        <div class="col" data-grade="1"><div class="p-1 rounded border small fw-bold bg-light text-muted">1</div></div>
+        <div class="col" data-grade="1.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">1.5</div></div>
+        <div class="col" data-grade="2"><div class="p-1 rounded border small fw-bold bg-light text-muted">2</div></div>
+        <div class="col" data-grade="2.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">2.5</div></div>
+        <div class="col" data-grade="3"><div class="p-1 rounded border small fw-bold bg-light text-muted">3</div></div>
+        <div class="col" data-grade="3.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">3.5</div></div>
+        <div class="col" data-grade="4"><div class="p-1 rounded border small fw-bold bg-light text-muted">4</div></div>
       </div>
-      <span id="scoreSinging" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 20</span>
     </div>
-
-    <!-- 2. ตีกลอง (เต็ม 15) -->
-    <div class="d-flex align-items-center gap-2">
-      <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">2.ตีกลอง</span>
-      <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
-        <div id="barDrum" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
-        <span id="valDrum" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
-      </div>
-      <span id="scoreDrum" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 15</span>
-    </div>
-
-    <!-- 3. เล่นกีต้าร์ (เต็ม 15) -->
-    <div class="d-flex align-items-center gap-2">
-      <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">3.เล่นกีต้าร์</span>
-      <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
-        <div id="barGuitar" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
-        <span id="valGuitar" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
-      </div>
-      <span id="scoreGuitar" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 15</span>
-    </div>
-
-    <!-- 4. รวมวง (เต็ม 50) -->
-    <div class="d-flex align-items-center gap-2">
-      <span class="badge bg-light text-dark border px-2 py-2 rounded-pill text-nowrap" style="width: 85px; font-size: 0.75rem;">4.รวมวง</span>
-      <div class="progress flex-grow-1 position-relative rounded-pill bg-light" style="height: 24px; border: 1px solid #e9ecef;">
-        <div id="barEnsemble" class="progress-bar rounded-pill transition-all" style="width: 0%; transition: width 0.6s ease;"></div>
-        <span id="valEnsemble" class="position-absolute w-100 text-center fw-bold small text-dark" style="line-height: 24px;">0.00 / 4.0</span>
-      </div>
-      <span id="scoreEnsemble" class="badge bg-light text-dark border px-2 py-2 rounded-pill text-center fw-bold" style="width: 75px; font-size: 0.72rem;">0.0 / 50</span>
-    </div>
-  </div>
-
-  <hr class="my-3 text-muted">
-
-  <!-- แถบสรุประดับเกรด 8 ช่อง (0, 1, 1.5, 2, 2.5, 3, 3.5, 4) -->
-  <div>
-    <div class="d-flex justify-content-between align-items-center mb-1">
-      <span class="fw-bold small text-secondary"><i class="fa-solid fa-award me-1"></i>เกรด:</span>
-      <span id="finalGradeText" class="fw-bold text-danger">เกรด: 0</span>
-    </div>
-    
-    <div class="row g-1 text-center" id="gradeSegmentsContainer">
-      <div class="col" data-grade="0"><div class="p-1 rounded border small fw-bold bg-light text-muted">0</div></div>
-      <div class="col" data-grade="1"><div class="p-1 rounded border small fw-bold bg-light text-muted">1</div></div>
-      <div class="col" data-grade="1.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">1.5</div></div>
-      <div class="col" data-grade="2"><div class="p-1 rounded border small fw-bold bg-light text-muted">2</div></div>
-      <div class="col" data-grade="2.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">2.5</div></div>
-      <div class="col" data-grade="3"><div class="p-1 rounded border small fw-bold bg-light text-muted">3</div></div>
-      <div class="col" data-grade="3.5"><div class="p-1 rounded border small fw-bold bg-light text-muted">3.5</div></div>
-      <div class="col" data-grade="4"><div class="p-1 rounded border small fw-bold bg-light text-muted">4</div></div>
-    </div>
-  </div>
-</div>
+  </div> <!-- ปิดกล่องเกรดสรุป card-custom -->
 
     <!-- Main Menu -->
 <!-- 🟢 เมนูหลักระบบสำหรับนักเรียน (4 รายวิชา) -->
