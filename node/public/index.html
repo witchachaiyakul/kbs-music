@@ -1487,7 +1487,7 @@ async function handleRegister(e) {
         titleEl.textContent = studentName ? `ประเมินการร้องเพลง: ${studentName}` : `ประเมินการร้องเพลง: รหัส ${studentCode}`;
       }
 
-      fetchAndSetupSingingEvaluation(studentCode);
+      fetchAndSetupCategoryEvaluation(studentCode);
     }
 
     // ==========================================
@@ -1596,7 +1596,7 @@ async function handleRegister(e) {
       document.getElementById("singingRoleBadge").textContent = currentUserData ? (currentUserData.role === 'Student' ? 'นักเรียน' : 'ผู้ปกครอง') : 'นักเรียน';
       document.getElementById("videoRecordSection").style.display = "block";
       
-      fetchAndSetupSingingEvaluation(currentTargetStudentCode);
+      fetchAndSetupCategoryEvaluation(currentTargetStudentCode);
     }
 
     function closeSingingModule() {
@@ -1631,6 +1631,7 @@ async function handleRegister(e) {
       closeSingingModule();
     }
 
+// 🟢 ฟังก์ชันกลางดึงข้อมูลการประเมิน วิดีโอ ตาราง Rubric และ Radar Chart (ใช้ร่วมกันทุกวิชา)
 async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix) {
   document.getElementById("loadingText").textContent = `กำลังดึงข้อมูลการประเมิน (${categoryName})...`;
   document.getElementById("loading").style.display = "block";
@@ -1643,16 +1644,16 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
 
   document.getElementById("loading").style.display = "none";
 
-  // 🟢 1. แจ้งเตือน Alert เมื่อดึงข้อมูลไม่สำเร็จ แทนการ return เงียบๆ
+  // 1. แจ้งเตือน Alert เมื่อดึงข้อมูลไม่สำเร็จ
   if (!res || !res.success) {
     Swal.fire("แจ้งเตือน", res ? res.message : `ไม่สามารถดึงข้อมูลวิชา ${categoryName} ได้`, "warning");
     return;
   }
 
-  // 2. จัดการแสดงผลวิดีโอ
-  const videoContainer = document.getElementById(`${prefix}VideoContainer`);
-  const noVideoAlert = document.getElementById(`${prefix}NoVideoAlert`);
-  const videoFrame = document.getElementById(`${prefix}VideoPlayerFrame`);
+  // 2. จัดการแสดงผลวิดีโอ (รองรับ ID ทั้งแบบมี prefix และไม่มี prefix)
+  const videoContainer = document.getElementById(`${prefix}VideoContainer`) || document.getElementById("videoContainer");
+  const noVideoAlert = document.getElementById(`${prefix}NoVideoAlert`) || document.getElementById("noVideoAlert");
+  const videoFrame = document.getElementById(`${prefix}VideoPlayerFrame`) || document.getElementById("videoPlayerFrame");
 
   let fileId = res.latestFileId;
   if (!fileId && res.latestVideoUrl) {
@@ -1669,60 +1670,67 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
     videoContainer.classList.remove("d-none");
     noVideoAlert.classList.add("d-none");
   } else if (videoContainer && noVideoAlert) {
+    if (videoFrame) videoFrame.src = "";
     videoContainer.classList.add("d-none");
     noVideoAlert.classList.remove("d-none");
   }
 
-  // 🟢 3. อัปเดตสถานะการประเมินและตาราง Rubric (สำหรับวิชาตีกลอง)
-  if (prefix === 'drum') {
-    if (res.isEvaluated) {
-      isDrumEvalLocked = true;
-      const alertEl = document.getElementById("drumEvalStatusAlert");
-      if (alertEl) alertEl.className = "alert alert-success rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
-      
-      const titleEl = document.getElementById("drumEvalAlertTitle");
-      if (titleEl) titleEl.textContent = "ได้รับการประเมินเรียบร้อยแล้ว";
-      
-      const descEl = document.getElementById("drumEvalAlertDesc");
-      if (descEl) descEl.textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
-      
-      const btnBtn = document.getElementById("drumSaveEvalBtnContainer");
-      if (btnBtn) btnBtn.classList.add("d-none");
+  // 3. ปรับปรุงสถานะการประเมินและตาราง Rubric แบบ Dynamic สำหรับทุกวิชา
+  const alertEl = document.getElementById(`${prefix}EvalStatusAlert`) || document.getElementById("evalStatusAlert");
+  const titleEl = document.getElementById(`${prefix}EvalAlertTitle`) || document.getElementById("evalAlertTitle");
+  const descEl = document.getElementById(`${prefix}EvalAlertDesc`) || document.getElementById("evalAlertDesc");
+  const btnContainer = document.getElementById(`${prefix}SaveEvalBtnContainer`) || document.getElementById("saveEvalBtnContainer");
 
-      const myScores = currentUserData.role === "Teacher" ? res.teacherScores : (currentUserData.role === "Parent" ? res.parentScores : res.studentScores);
-      if (myScores) {
-        ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
-          const lvl = myScores[idx];
-          const cell = document.querySelector(`.drum-rubric[data-drow="${row}"][data-dlevel="${lvl}"]`);
-          if (cell) cell.classList.add(`selected-${lvl}`);
-        });
-      }
-    } else {
-      isDrumEvalLocked = false;
-      const alertEl = document.getElementById("drumEvalStatusAlert");
-      if (alertEl) alertEl.className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
-      
-      const titleEl = document.getElementById("drumEvalAlertTitle");
-      if (titleEl) titleEl.textContent = "ยังไม่ได้ประเมิน";
-      
-      const descEl = document.getElementById("drumEvalAlertDesc");
-      if (descEl) descEl.textContent = "กรุณาบันทึกวิดีโอและทำการประเมินในตารางด้านล่าง";
-      
-      const btnBtn = document.getElementById("drumSaveEvalBtnContainer");
-      if (btnBtn) btnBtn.classList.remove("d-none");
+  // รีเซ็ตคลาสไฮไลท์และสถานะล็อกเดิมก่อนอัปเดต
+  if (prefix === 'drum') isDrumEvalLocked = false;
+  else isCurrentEvaluationLocked = false;
+
+  if (res.isEvaluated) {
+    if (prefix === 'drum') isDrumEvalLocked = true;
+    else isCurrentEvaluationLocked = true;
+
+    if (alertEl) alertEl.className = "alert alert-success rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
+    if (titleEl) titleEl.textContent = "ได้รับการประเมินเรียบร้อยแล้ว";
+    if (descEl) descEl.textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
+    if (btnContainer) btnContainer.classList.add("d-none");
+
+    // เลือกดึงชุดคะแนนตามบทบาทผู้ใช้งานปัจจุบัน
+    const userRole = currentUserData ? currentUserData.role : 'Student';
+    const myScores = userRole === "Teacher" ? res.teacherScores : (userRole === "Parent" ? res.parentScores : res.studentScores);
+
+    if (myScores) {
+      ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
+        const lvl = myScores[idx];
+        // ค้นหาเซลล์ Rubric ของวิชานั้นๆ
+        const cell = document.querySelector(`.${prefix}-rubric[data-${prefix}row="${row}"][data-${prefix}level="${lvl}"]`) 
+                  || document.querySelector(`.rubric-cell[data-row="${row}"][data-level="${lvl}"]`);
+        if (cell) cell.classList.add(`selected-${lvl}`);
+      });
     }
+
+    // ล็อกเซลล์ตาราง
+    const allCells = document.querySelectorAll(`.${prefix}-rubric, .rubric-cell`);
+    allCells.forEach(c => c.classList.add('locked'));
+
+  } else {
+    if (alertEl) alertEl.className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
+    if (titleEl) titleEl.textContent = "ยังไม่ได้ประเมิน";
+    if (descEl) descEl.textContent = "กรุณารับชมวิดีโอและทำการประเมินในตารางด้านล่าง";
+    if (btnContainer) btnContainer.classList.remove("d-none");
+
+    // ปลดล็อกตารางให้เลือกคะแนนได้
+    const allCells = document.querySelectorAll(`.${prefix}-rubric, .rubric-cell`);
+    allCells.forEach(c => c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4'));
   }
 
-  // 4. แสดง Radar Chart
-  const radarSection = document.getElementById(`${prefix}RadarSection`);
+  // 4. แสดงและวาด Radar Chart 3 ฝ่ายตามวิชา
+  const radarSection = document.getElementById(`${prefix}RadarSection`) || document.getElementById("radarSection");
   if (radarSection) radarSection.classList.remove("d-none");
 
   if (prefix === 'drum' && typeof initDrumRadarCharts === 'function') {
-    initDrumRadarCharts(
-      res.teacherScores || [0,0,0], 
-      res.studentScores || [0,0,0], 
-      res.parentScores || [0,0,0]
-    );
+    initDrumRadarCharts(res.teacherScores || [0,0,0], res.studentScores || [0,0,0], res.parentScores || [0,0,0]);
+  } else if (typeof initThreePartyRadarCharts === 'function') {
+    initThreePartyRadarCharts(res.teacherScores || [0,0,0], res.studentScores || [0,0,0], res.parentScores || [0,0,0]);
   }
 }
 
@@ -1813,7 +1821,7 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
               icon: "success",
               confirmButtonColor: "#d63384"
             }).then(() => {
-              fetchAndSetupSingingEvaluation(currentTargetStudentCode);
+              fetchAndSetupCategoryEvaluation(currentTargetStudentCode);
             });
           } else {
             Swal.fire("แจ้งเตือน", res ? res.message : "บันทึกไม่สำเร็จ", "warning");
@@ -1955,7 +1963,7 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
 
         if (res && res.success) {
           Swal.fire("สำเร็จ!", "อัปโหลดวิดีโอลง Google Drive สำเร็จ", "success").then(() => {
-            fetchAndSetupSingingEvaluation(currentTargetStudentCode);
+            fetchAndSetupCategoryEvaluation(currentTargetStudentCode);
           });
         } else {
           Swal.fire("ข้อผิดพลาด", res ? res.message : "อัปโหลดไม่สำเร็จ", "error");
