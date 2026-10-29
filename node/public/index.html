@@ -344,7 +344,7 @@
   <div class="row g-3">
     <!-- 1. บันทึกการร้องเพลง -->
     <div class="col-12">
-      <div class="card card-custom p-3 bg-white border-start border-4 border-danger shadow-sm" onclick="openSingingModule()" style="cursor:pointer;">
+      <div class="card card-custom p-3 bg-white border-start border-4 border-danger shadow-sm" onclick="openModule('ร้องเพลง', '')" style="cursor:pointer;">
         <div class="d-flex align-items-center">
           <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-4 me-3">
             <i class="fa-solid fa-microphone-lines fa-2x"></i>
@@ -362,7 +362,7 @@
 
     <!-- 2. บันทึกการตีกลอง -->
     <div class="col-12">
-      <div class="card card-custom p-3 bg-white border-start border-4 border-warning shadow-sm" onclick="openDrumModule()" style="cursor:pointer;">
+      <div class="card card-custom p-3 bg-white border-start border-4 border-warning shadow-sm" onclick="openModule('ตีกลอง', 'drum')" style="cursor:pointer;">
         <div class="d-flex align-items-center">
           <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-4 me-3">
             <i class="fa-solid fa-drum fa-2x"></i>
@@ -379,7 +379,7 @@
 
     <!-- 3. บันทึกการเล่นกีต้าร์ -->
     <div class="col-12">
-      <div class="card card-custom p-3 bg-white border-start border-4 border-primary shadow-sm" onclick="openGuitarModule()" style="cursor:pointer;">
+      <div class="card card-custom p-3 bg-white border-start border-4 border-primary shadow-sm" onclick="openModule('เล่นกีต้าร์', 'guitar')" style="cursor:pointer;">
         <div class="d-flex align-items-center">
           <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-4 me-3">
             <i class="fa-solid fa-guitar fa-2x"></i>
@@ -396,7 +396,7 @@
 
     <!-- 4. บันทึกการรวมวง -->
     <div class="col-12">
-      <div class="card card-custom p-3 bg-white border-start border-4 border-success shadow-sm" onclick="openEnsembleModule()" style="cursor:pointer;">
+      <div class="card card-custom p-3 bg-white border-start border-4 border-success shadow-sm" onclick="openModule('รวมวง', 'ensemble')" style="cursor:pointer;">
         <div class="d-flex align-items-center">
           <div class="p-3 bg-success bg-opacity-10 text-success rounded-4 me-3">
             <i class="fa-solid fa-people-group fa-2x"></i>
@@ -419,9 +419,7 @@
   <div id="singingView" class="container" style="display: none; max-width: 650px;">
     <div class="d-flex align-items-center justify-content-between bg-white p-3 rounded-4 shadow-sm mb-3">
       <div class="d-flex align-items-center">
-        <button class="btn btn-outline-danger btn-sm rounded-circle me-3" onclick="closeSingingModule()" style="width: 36px; height: 36px;">
-          <i class="fa-solid fa-arrow-left"></i>
-        </button>
+        <button class="btn btn-outline-danger btn-sm rounded-circle me-3" onclick="closeModule('')" class="btn btn-outline-danger">ย้อนกลับ</button>
         <div>
           <h6 class="fw-bold mb-0 text-dark" id="singingStudentName"><i class="fa-solid fa-microphone-lines text-danger me-2"></i>บันทึกการร้องเพลง</h6>
           <small class="text-muted" id="singingModuleHeaderSub">ประเมินการร้องเพลง</small>
@@ -573,9 +571,7 @@
   <!-- 1. แถบหัวข้อและปุ่มย้อนกลับ -->
   <div class="d-flex align-items-center justify-content-between bg-white p-3 rounded-4 shadow-sm mb-3">
     <div class="d-flex align-items-center">
-      <button class="btn btn-outline-warning btn-sm rounded-circle me-3" onclick="closeDrumModule()" style="width: 36px; height: 36px;">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
+      <button class="btn btn-outline-warning btn-sm rounded-circle me-3" onclick="closeModule('')" class="btn btn-outline-danger">ย้อนกลับ</button>
       <div>
         <h6 class="fw-bold mb-0 text-dark" id="drumStudentName"><i class="fa-solid fa-drum text-warning me-2"></i>บันทึกการตีกลอง</h6>
         <small class="text-muted">ระบบประเมินผลการเรียนรู้ 3 ฝ่าย (ตีกลอง)</small>
@@ -773,9 +769,7 @@
 <div id="guitarView" class="container" style="display: none; max-width: 650px;">
   <div class="d-flex align-items-center justify-content-between bg-white p-3 rounded-4 shadow-sm mb-3">
     <div class="d-flex align-items-center">
-      <button class="btn btn-outline-primary btn-sm rounded-circle me-3" onclick="closeGuitarModule()" style="width: 36px; height: 36px;">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
+      <button class="btn btn-outline-primary btn-sm rounded-circle me-3" onclick="closeModule('')" class="btn btn-outline-danger">ย้อนกลับ</button>
       <div>
         <h6 class="fw-bold mb-0 text-dark" id="guitarStudentName"><i class="fa-solid fa-guitar text-primary me-2"></i>บันทึกการเล่นกีต้าร์</h6>
         <small class="text-muted">ระบบประเมินผลการเรียนรู้ 3 ฝ่าย (กีต้าร์)</small>
@@ -818,9 +812,7 @@
 <div id="ensembleView" class="container" style="display: none; max-width: 650px;">
   <div class="d-flex align-items-center justify-content-between bg-white p-3 rounded-4 shadow-sm mb-3">
     <div class="d-flex align-items-center">
-      <button class="btn btn-outline-success btn-sm rounded-circle me-3" onclick="closeEnsembleModule()" style="width: 36px; height: 36px;">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
+      <button class="btn btn-outline-success btn-sm rounded-circle me-3" onclick="closeModule('')" class="btn btn-outline-danger">ย้อนกลับ</button>
       <div>
         <h6 class="fw-bold mb-0 text-dark" id="ensembleStudentName"><i class="fa-solid fa-people-group text-success me-2"></i>บันทึกการรวมวง</h6>
         <small class="text-muted">ระบบประเมินผลการเรียนรู้ 3 ฝ่าย (รวมวง)</small>
@@ -1109,7 +1101,7 @@
     // ==========================================
     // ⚙️ CONFIGURATION & GLOBAL VARIABLES
     // ==========================================
-    const IS_DEV = false; // 👈 เปลี่ยนเป็น false เมื่อใช้งานจริง
+    const IS_DEV =false; // 👈 เปลี่ยนเป็น false เมื่อใช้งานจริง
     const DEV_ROLE = "Student"; // 👈 เปลี่ยนเป็น "Teacher", "Student", หรือ "Parent" เพื่อทดสอบ
     const DEV_STUDENT_ID = "08804"; // 👈 ใส่รหัสนักเรียนสำหรับทดสอบดึงข้อมูล
     const LIFF_ID = "2012217753-jKG877EO";
@@ -1120,6 +1112,101 @@
       displayName: "นักเรียนทดสอบ (Dev)",
       pictureUrl: "https://via.placeholder.com/70/d63384/ffffff?text=DEV"
     };
+
+        // รายชื่อ ID ของ View ทั้งหมดในระบบ
+    const ALL_SECTIONS = [
+      'loading',
+      'registerView',
+      'teacherDashboardView',
+      'parentDashboardView',
+      'mainDashboard',
+      'singingView',
+      'drumView',
+      'guitarView',
+      'ensembleView',
+      'parentSingingView'
+    ];
+
+    // 🟢 ฟังก์ชันกลางสำหรับเปิดหน้าจอที่ต้องการ และซ่อนหน้าอื่นทั้งหมด
+    function showSection(targetId) {
+      ALL_SECTIONS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = (id === targetId) ? 'block' : 'none';
+        }
+      });
+    }
+
+    // 🟢 ฟังก์ชันกลางล้างค่าตัวแปร และ reset UI ของโมดูล
+    function resetSection(prefix = '') {
+      // 1. ปิดกล้องสด และเลิกรัน Canvas Loop (ถ้าเปิดอยู่)
+      if (typeof stopCamera === 'function') stopCamera();
+      if (typeof isCanvasLoopRunning !== 'undefined') isCanvasLoopRunning = false;
+
+      // 2. รีเซ็ตตัวแปรคะแนน และสถานะล็อก
+      if (prefix === 'drum') {
+        drumSelectedScores = { rhythm: 0, melody: 0, expression: 0 };
+        isDrumEvalLocked = false;
+      } else {
+        selectedScores = { rhythm: 0, melody: 0, expression: 0 };
+        isCurrentEvaluationLocked = false;
+      }
+
+      // 3. เคลียร์คลาสไฮไลท์สี และคลาสล็อกบนตาราง Rubric
+      const cellSelector = prefix ? `.${prefix}-rubric, .rubric-cell` : `.rubric-cell`;
+      document.querySelectorAll(cellSelector).forEach(cell => {
+        cell.classList.remove('selected-1', 'selected-2', 'selected-3', 'selected-4', 'locked');
+      });
+
+      // 4. ล้างลิงก์วิดีโอค้างใน Iframe
+      const videoFrame = (prefix && document.getElementById(`${prefix}VideoPlayerFrame`)) 
+                      || document.getElementById("videoPlayerFrame");
+      if (videoFrame) videoFrame.src = "";
+
+      // 5. รีเซ็ตปุ่มเปิดกล้อง / ปุ่มบันทึกวิดีโอให้กลับสู่สถานะเริ่มต้น
+      const btnStartCam = (prefix && document.getElementById(`btn${prefix.charAt(0).toUpperCase() + prefix.slice(1)}StartCam`)) 
+                      || document.getElementById("btnStartCam");
+      const btnRecord = (prefix && document.getElementById(`btn${prefix.charAt(0).toUpperCase() + prefix.slice(1)}Record`)) 
+                    || document.getElementById("btnRecord");
+
+      if (btnStartCam) btnStartCam.classList.remove("d-none");
+      if (btnRecord) btnRecord.classList.add("d-none");
+    }
+
+        // 🟢 ฟังก์ชันกลางสำหรับเปิดโมดูลย่อยทุกวิชา
+    function openModule(categoryName, prefix = '') {
+      currentTargetStudentCode = currentUserData ? currentUserData.studentCode : (IS_DEV ? DEV_STUDENT_ID : '');
+      
+      // 1. ล้าง UI และตัวแปรเดิมออกก่อน
+      resetSection(prefix);
+      
+      // 2. สลับหน้าจอ
+      const targetViewId = prefix ? `${prefix}View` : 'singingView';
+      showSection(targetViewId);
+      
+      // 3. ดึงข้อมูลใหม่
+      fetchAndSetupCategoryEvaluation(categoryName, currentTargetStudentCode, prefix);
+    }
+
+    // 🟢 ฟังก์ชันกลางสำหรับกดย้อนกลับ (Close Module)
+    function closeModule(prefix = '') {
+      // 1. ล้าง UI และปิดกล้อง
+      resetSection(prefix);
+
+      // 2. ตรวจสอบบทบาทผู้ใช้ แล้วสลับหน้าจอ + อัปเดตข้อมูลความก้าวหน้า
+      if (currentUserData && currentUserData.role === "Teacher") {
+        showSection('teacherDashboardView');
+        if (typeof loadTeacherDashboardData === 'function') loadTeacherDashboardData();
+      } else if (currentUserData && currentUserData.role === "Parent") {
+        showSection('parentDashboardView');
+        if (typeof loadParentDashboardData === 'function') loadParentDashboardData(currentUserData.studentCode);
+      } else {
+        showSection('mainDashboard');
+        if (typeof loadStudentProgressDashboard === 'function') {
+          loadStudentProgressDashboard(currentTargetStudentCode);
+        }
+      }
+    }
 
     let currentUserProfile = null;
     let currentUserData = null;
@@ -1589,49 +1676,7 @@ async function handleRegister(e) {
     // ==========================================
     // 🎤 SINGING EVALUATION MODULE LOGIC
     // ==========================================
-    function openSingingModule() {
-      currentTargetStudentCode = currentUserData ? currentUserData.studentCode : (IS_DEV ? DEV_STUDENT_ID : '');
-      document.getElementById("mainDashboard").style.display = "none";
-      document.getElementById("singingView").style.display = "block";
-      document.getElementById("singingRoleBadge").textContent = currentUserData ? (currentUserData.role === 'Student' ? 'นักเรียน' : 'ผู้ปกครอง') : 'นักเรียน';
-      document.getElementById("videoRecordSection").style.display = "block";
-      
-      fetchAndSetupCategoryEvaluation(currentTargetStudentCode);
-    }
-
-    function closeSingingModule() {
-      // 1. ปิดการทำงานของกล้องสด (กรณีเปิดอัดวิดีโออยู่)
-      if (typeof stopCamera === 'function') {
-        stopCamera();
-      }
-
-      // 2. ซ่อนหน้าประเมินการร้องเพลง
-      const singingView = document.getElementById("singingView");
-      if (singingView) singingView.style.display = "none";
-
-      // 3. สลับหน้าจอตามบทบาทผู้ใช้งาน (Teacher / Student / Parent)
-      if (currentUserData && currentUserData.role === "Teacher") {
-        // ถ้าเป็นครู ➔ พาเปิดกลับหน้า Teacher Dashboard พร้อมอัปเดตตาราง
-        const teacherView = document.getElementById("teacherDashboardView");
-        if (teacherView) teacherView.style.display = "block";
-        if (typeof loadTeacherDashboardData === 'function') {
-          loadTeacherDashboardData();
-        }
-      } else {
-        // ถ้าเป็นนักเรียน/ผู้ปกครอง ➔ พาเปิดกลับหน้า เมนูหลัก (Main Dashboard)
-        const mainView = document.getElementById("mainDashboard");
-        if (mainView) mainView.style.display = "block";
-        if (currentUserData && currentUserData.studentCode && typeof loadStudentProgressDashboard === 'function') {
-          loadStudentProgressDashboard(currentUserData.studentCode);
-        }
-      }
-    }
-
-    function goBackFromSinging() {
-      closeSingingModule();
-    }
-
-// 🟢 ฟังก์ชันกลางดึงข้อมูลการประเมิน วิดีโอ ตาราง Rubric และ Radar Chart (ใช้ร่วมกันทุกวิชา)
+// 🟢 ฟังก์ชันกลางดึงข้อมูลการประเมิน วิดีโอ ตาราง Rubric และ Radar Chart (ปรับปรุงความปลอดภัย DOM)
 async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix) {
   document.getElementById("loadingText").textContent = `กำลังดึงข้อมูลการประเมิน (${categoryName})...`;
   document.getElementById("loading").style.display = "block";
@@ -1644,16 +1689,15 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
 
   document.getElementById("loading").style.display = "none";
 
-  // 1. แจ้งเตือน Alert เมื่อดึงข้อมูลไม่สำเร็จ
   if (!res || !res.success) {
     Swal.fire("แจ้งเตือน", res ? res.message : `ไม่สามารถดึงข้อมูลวิชา ${categoryName} ได้`, "warning");
     return;
   }
 
-  // 2. จัดการแสดงผลวิดีโอ (รองรับ ID ทั้งแบบมี prefix และไม่มี prefix)
-  const videoContainer = document.getElementById(`${prefix}VideoContainer`) || document.getElementById("videoContainer");
-  const noVideoAlert = document.getElementById(`${prefix}NoVideoAlert`) || document.getElementById("noVideoAlert");
-  const videoFrame = document.getElementById(`${prefix}VideoPlayerFrame`) || document.getElementById("videoPlayerFrame");
+  // 1. จัดการแสดงผลวิดีโอ (ตรวจสอบ prefix ป้องกันการหา ID พลาด)
+  const videoContainer = (prefix && document.getElementById(`${prefix}VideoContainer`)) || document.getElementById("videoContainer");
+  const noVideoAlert = (prefix && document.getElementById(`${prefix}NoVideoAlert`)) || document.getElementById("noVideoAlert");
+  const videoFrame = (prefix && document.getElementById(`${prefix}VideoPlayerFrame`)) || document.getElementById("videoPlayerFrame");
 
   let fileId = res.latestFileId;
   if (!fileId && res.latestVideoUrl) {
@@ -1675,13 +1719,12 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
     noVideoAlert.classList.remove("d-none");
   }
 
-  // 3. ปรับปรุงสถานะการประเมินและตาราง Rubric แบบ Dynamic สำหรับทุกวิชา
-  const alertEl = document.getElementById(`${prefix}EvalStatusAlert`) || document.getElementById("evalStatusAlert");
-  const titleEl = document.getElementById(`${prefix}EvalAlertTitle`) || document.getElementById("evalAlertTitle");
-  const descEl = document.getElementById(`${prefix}EvalAlertDesc`) || document.getElementById("evalAlertDesc");
-  const btnContainer = document.getElementById(`${prefix}SaveEvalBtnContainer`) || document.getElementById("saveEvalBtnContainer");
+  // 2. อัปเดตสถานะการประเมินและตาราง Rubric
+  const alertEl = (prefix && document.getElementById(`${prefix}EvalStatusAlert`)) || document.getElementById("evalStatusAlert");
+  const titleEl = (prefix && document.getElementById(`${prefix}EvalAlertTitle`)) || document.getElementById("evalAlertTitle");
+  const descEl = (prefix && document.getElementById(`${prefix}EvalAlertDesc`)) || document.getElementById("evalAlertDesc");
+  const btnContainer = (prefix && document.getElementById(`${prefix}SaveEvalBtnContainer`)) || document.getElementById("saveEvalBtnContainer");
 
-  // รีเซ็ตคลาสไฮไลท์และสถานะล็อกเดิมก่อนอัปเดต
   if (prefix === 'drum') isDrumEvalLocked = false;
   else isCurrentEvaluationLocked = false;
 
@@ -1694,23 +1737,25 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
     if (descEl) descEl.textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
     if (btnContainer) btnContainer.classList.add("d-none");
 
-    // เลือกดึงชุดคะแนนตามบทบาทผู้ใช้งานปัจจุบัน
     const userRole = currentUserData ? currentUserData.role : 'Student';
     const myScores = userRole === "Teacher" ? res.teacherScores : (userRole === "Parent" ? res.parentScores : res.studentScores);
 
     if (myScores) {
       ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
         const lvl = myScores[idx];
-        // ค้นหาเซลล์ Rubric ของวิชานั้นๆ
-        const cell = document.querySelector(`.${prefix}-rubric[data-${prefix}row="${row}"][data-${prefix}level="${lvl}"]`) 
-                  || document.querySelector(`.rubric-cell[data-row="${row}"][data-level="${lvl}"]`);
+        let cell = null;
+        if (prefix) {
+          cell = document.querySelector(`.${prefix}-rubric[data-${prefix}row="${row}"][data-${prefix}level="${lvl}"]`);
+        }
+        if (!cell) {
+          cell = document.querySelector(`.rubric-cell[data-row="${row}"][data-level="${lvl}"]`);
+        }
         if (cell) cell.classList.add(`selected-${lvl}`);
       });
     }
 
-    // ล็อกเซลล์ตาราง
-    const allCells = document.querySelectorAll(`.${prefix}-rubric, .rubric-cell`);
-    allCells.forEach(c => c.classList.add('locked'));
+    const cellSelector = prefix ? `.${prefix}-rubric, .rubric-cell` : `.rubric-cell`;
+    document.querySelectorAll(cellSelector).forEach(c => c.classList.add('locked'));
 
   } else {
     if (alertEl) alertEl.className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
@@ -1718,14 +1763,15 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
     if (descEl) descEl.textContent = "กรุณารับชมวิดีโอและทำการประเมินในตารางด้านล่าง";
     if (btnContainer) btnContainer.classList.remove("d-none");
 
-    // ปลดล็อกตารางให้เลือกคะแนนได้
-    const allCells = document.querySelectorAll(`.${prefix}-rubric, .rubric-cell`);
-    allCells.forEach(c => c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4'));
+    const cellSelector = prefix ? `.${prefix}-rubric, .rubric-cell` : `.rubric-cell`;
+    document.querySelectorAll(cellSelector).forEach(c => c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4'));
   }
 
-  // 4. แสดงและวาด Radar Chart 3 ฝ่ายตามวิชา
-  const radarSection = document.getElementById(`${prefix}RadarSection`) || document.getElementById("radarSection");
-  if (radarSection) radarSection.classList.remove("d-none");
+  // 3. ปลดล็อกซ่อน d-none และวาด Radar Chart 3 ฝ่าย
+  const radarSection = (prefix && document.getElementById(`${prefix}RadarSection`)) || document.getElementById("radarSection");
+  if (radarSection) {
+    radarSection.classList.remove("d-none");
+  }
 
   if (prefix === 'drum' && typeof initDrumRadarCharts === 'function') {
     initDrumRadarCharts(res.teacherScores || [0,0,0], res.studentScores || [0,0,0], res.parentScores || [0,0,0]);
@@ -1830,77 +1876,71 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
       });
     }
 
-    function initThreePartyRadarCharts(teacherScores, studentScores, parentScores) {
-      const levelLabels = ["", "เริ่มต้น", "กำลังพัฒนา", "สามารถ", "เหนือความคาดหวัง"];
-      const radarLabels = ['1. จังหวะ', '2. ทำนอง', '3. การแสดงออก'];
+// 🎤 ฟังก์ชันวาด Radar Chart 3 ฝ่าย สำหรับวิชาร้องเพลง
+function initSingingRadarCharts(tScores, sScores, pScores) {
+  const levelLabels = ["", "เริ่มต้น", "กำลังพัฒนา", "สามารถ", "เหนือความคาดหวัง"];
+  const radarLabels = ['1. จังหวะ', '2. ทำนอง', '3. การแสดงออก'];
 
-      const getCommonOptions = () => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-          padding: { top: 20, bottom: 20, left: 35, right: 35 }
-        },
-        plugins: { legend: { display: false } },
-        scales: {
-          r: {
-            min: 0,
-            max: 4,
-            grid: { circular: true, color: 'rgba(0, 0, 0, 0.12)' },
-            angleLines: { display: true, color: 'rgba(0, 0, 0, 0.15)' },
-            ticks: {
-              stepSize: 1,
-              display: true,
-              font: { family: 'Sarabun', size: 10 },
-              color: '#6c757d',
-              callback: function(v) { return levelLabels[v] || ''; }
-            },
-            pointLabels: {
-              font: { family: 'Sarabun', size: 12, weight: 'bold' },
-              color: '#212529'
-            }
-          }
-        }
-      });
-
-      if (chartTeacherInstance) chartTeacherInstance.destroy();
-      const ctxT = document.getElementById('radarChartTeacher');
-      if (ctxT) {
-        chartTeacherInstance = new Chart(ctxT.getContext('2d'), {
-          type: 'radar',
-          data: {
-            labels: radarLabels,
-            datasets: [{ data: teacherScores || [0,0,0], backgroundColor: 'rgba(214, 51, 132, 0.25)', borderColor: '#d63384', borderWidth: 2, pointRadius: 5 }]
-          },
-          options: getCommonOptions()
-        });
-      }
-
-      if (chartStudentInstance) chartStudentInstance.destroy();
-      const ctxS = document.getElementById('radarChartStudent');
-      if (ctxS) {
-        chartStudentInstance = new Chart(ctxS.getContext('2d'), {
-          type: 'radar',
-          data: {
-            labels: radarLabels,
-            datasets: [{ data: studentScores || [0,0,0], backgroundColor: 'rgba(13, 110, 253, 0.25)', borderColor: '#0d6efd', borderWidth: 2, pointRadius: 5 }]
-          },
-          options: getCommonOptions()
-        });
-      }
-
-      if (chartParentInstance) chartParentInstance.destroy();
-      const ctxP = document.getElementById('radarChartParent');
-      if (ctxP) {
-        chartParentInstance = new Chart(ctxP.getContext('2d'), {
-          type: 'radar',
-          data: {
-            labels: radarLabels,
-            datasets: [{ data: parentScores || [0,0,0], backgroundColor: 'rgba(25, 135, 84, 0.25)', borderColor: '#198754', borderWidth: 2, pointRadius: 5 }]
-          },
-          options: getCommonOptions()
-        });
+  const getOptions = () => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { top: 20, bottom: 20, left: 35, right: 35 } },
+    plugins: { legend: { display: false } },
+    scales: {
+      r: {
+        min: 0, max: 4,
+        grid: { circular: true, color: 'rgba(0, 0, 0, 0.12)' },
+        angleLines: { display: true, color: 'rgba(0, 0, 0, 0.15)' },
+        ticks: { stepSize: 1, callback: v => levelLabels[v] || '' },
+        pointLabels: { font: { family: 'Sarabun', size: 12, weight: 'bold' } }
       }
     }
+  });
+
+  // ทำลาย Instance เดิมก่อนวาดใหม่
+  if (chartTeacherInstance) chartTeacherInstance.destroy();
+  if (chartStudentInstance) chartStudentInstance.destroy();
+  if (chartParentInstance) chartParentInstance.destroy();
+
+  // วาดกราฟของครู
+  const ctxT = document.getElementById('radarChartTeacher');
+  if (ctxT) {
+    chartTeacherInstance = new Chart(ctxT.getContext('2d'), {
+      type: 'radar',
+      data: {
+        labels: radarLabels,
+        datasets: [{ data: tScores || [0,0,0], backgroundColor: 'rgba(214, 51, 132, 0.25)', borderColor: '#d63384', borderWidth: 2, pointRadius: 5 }]
+      },
+      options: getOptions()
+    });
+  }
+
+  // วาดกราฟของนักเรียน
+  const ctxS = document.getElementById('radarChartStudent');
+  if (ctxS) {
+    chartStudentInstance = new Chart(ctxS.getContext('2d'), {
+      type: 'radar',
+      data: {
+        labels: radarLabels,
+        datasets: [{ data: sScores || [0,0,0], backgroundColor: 'rgba(13, 110, 253, 0.25)', borderColor: '#0d6efd', borderWidth: 2, pointRadius: 5 }]
+      },
+      options: getOptions()
+    });
+  }
+
+  // วาดกราฟของผู้ปกครอง
+  const ctxP = document.getElementById('radarChartParent');
+  if (ctxP) {
+    chartParentInstance = new Chart(ctxP.getContext('2d'), {
+      type: 'radar',
+      data: {
+        labels: radarLabels,
+        datasets: [{ data: pScores || [0,0,0], backgroundColor: 'rgba(25, 135, 84, 0.25)', borderColor: '#198754', borderWidth: 2, pointRadius: 5 }]
+      },
+      options: getOptions()
+    });
+  }
+}
 
     // ==========================================
     // 🎥 WEBCAM LOGIC
@@ -2258,76 +2298,6 @@ function initParentRadarCharts(tScores, sScores, pScores) {
 // ==========================================
 // 🥁 2. DRUM MODULE HANDLERS
 // ==========================================
-function openDrumModule() {
-  currentTargetStudentCode = currentUserData ? currentUserData.studentCode : (IS_DEV ? DEV_STUDENT_ID : '');
-  
-  const mainDash = document.getElementById("mainDashboard");
-  const drumView = document.getElementById("drumView");
-  
-  if (mainDash) mainDash.style.display = "none";
-  if (drumView) drumView.style.display = "block";
-
-  fetchAndSetupCategoryEvaluation('ตีกลอง', currentTargetStudentCode, 'drum');
-}
-
-function closeDrumModule() {
-  // 1. หยุดสตรีมกล้องสด
-  if (typeof stopCamera === 'function') {
-    stopCamera();
-  }
-  
-  // 2. หยุดอนิเมชัน Loop บน Canvas (ถ้าเปิดอยู่)
-  if (typeof isCanvasLoopRunning !== 'undefined') {
-    isCanvasLoopRunning = false;
-  }
-
-  // 3. สลับหน้าจอกลับแดชบอร์ดหลัก
-  const drumView = document.getElementById("drumView");
-  const mainDash = document.getElementById("mainDashboard");
-
-  if (drumView) drumView.style.display = "none";
-  if (mainDash) mainDash.style.display = "block";
-
-  // 4. โหลดข้อมูลคะแนนอัปเดตบนหน้าแดชบอร์ด
-  if (typeof loadStudentProgressDashboard === 'function') {
-    loadStudentProgressDashboard(currentTargetStudentCode);
-  }
-}
-
-// ==========================================
-// 🎸 3. GUITAR MODULE HANDLERS
-// ==========================================
-function openGuitarModule() {
-  currentTargetStudentCode = currentUserData ? currentUserData.studentCode : (IS_DEV ? DEV_STUDENT_ID : '');
-  document.getElementById("mainDashboard").style.display = "none";
-  document.getElementById("guitarView").style.display = "block";
-  fetchAndSetupCategoryEvaluation('เล่นกีต้าร์', currentTargetStudentCode, 'guitar');
-}
-
-function closeGuitarModule() {
-  stopCamera();
-  document.getElementById("guitarView").style.display = "none";
-  document.getElementById("mainDashboard").style.display = "block";
-  loadStudentProgressDashboard(currentTargetStudentCode);
-}
-
-// ==========================================
-// 🎷 4. ENSEMBLE MODULE HANDLERS
-// ==========================================
-function openEnsembleModule() {
-  currentTargetStudentCode = currentUserData ? currentUserData.studentCode : (IS_DEV ? DEV_STUDENT_ID : '');
-  document.getElementById("mainDashboard").style.display = "none";
-  document.getElementById("ensembleView").style.display = "block";
-  fetchAndSetupCategoryEvaluation('รวมวง', currentTargetStudentCode, 'ensemble');
-}
-
-function closeEnsembleModule() {
-  stopCamera();
-  document.getElementById("ensembleView").style.display = "none";
-  document.getElementById("mainDashboard").style.display = "block";
-  loadStudentProgressDashboard(currentTargetStudentCode);
-}
-
 // 🟢 ฟังก์ชันดึงข้อมูลและเรียกวาด Radar Chart ของวิชาตีกลอง
 async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix) {
   document.getElementById("loadingText").textContent = `กำลังดึงข้อมูลการประเมิน (${categoryName})...`;
@@ -2367,15 +2337,20 @@ async function fetchAndSetupCategoryEvaluation(categoryName, studentCode, prefix
     noVideoAlert.classList.remove("d-none");
   }
 
-  // 2. ปลดซ่อนกล่อง Radar Chart
-  const radarSection = document.getElementById(`${prefix}RadarSection`);
+// 🟢 แสดงและวาด Radar Chart ตามวิชา
+  const radarSection = (prefix && document.getElementById(`${prefix}RadarSection`)) || document.getElementById("radarSection");
   if (radarSection) {
     radarSection.classList.remove("d-none");
   }
 
-  // 3. วาด Radar Chart สำหรับวิชาตีกลอง
   if (prefix === 'drum' && typeof initDrumRadarCharts === 'function') {
     initDrumRadarCharts(
+      res.teacherScores || [0,0,0], 
+      res.studentScores || [0,0,0], 
+      res.parentScores || [0,0,0]
+    );
+  } else if ((prefix === '' || prefix === 'singing') && typeof initSingingRadarCharts === 'function') {
+    initSingingRadarCharts(
       res.teacherScores || [0,0,0], 
       res.studentScores || [0,0,0], 
       res.parentScores || [0,0,0]
