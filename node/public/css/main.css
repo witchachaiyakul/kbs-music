@@ -1,0 +1,62 @@
+/* ==========================================
+   🎨 MAIN / GLOBAL STYLES (ใช้ร่วมกันทุกหน้า)
+   ========================================== */
+:root {
+  --primary-color: #d63384;
+  --bg-gradient: linear-gradient(135deg, #fff5f8 0%, #fce4ec 100%);
+}
+
+body {
+  background: var(--bg-gradient);
+  font-family: 'Sarabun', -apple-system, sans-serif;
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+/* 1.1 ส่วนหัว Header และ Cards UI */
+.top-header-bar {
+  background: #ffffff;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 4px 15px rgba(214, 51, 132, 0.12);
+  border-bottom: 3px solid var(--primary-color);
+}
+
+.header-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.card-custom {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.profile-header {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 15px rgba(214, 51, 132, 0.1);
+}
+
+/* 1.2 ตารางรูบริคประเมินผล (Rubric Cells) */
+.rubric-cell {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+
+.rubric-cell:hover:not(.locked) {
+  opacity: 0.85;
+  transform: scale(1.02);
+}
+
+.rubric-cell.locked {
+  cursor: not-allowed;
+}
+
+.selected-1 { background-color: #dc3545 !important; color: white !important; font-weight: bold; }
+.selected-2 { background-color: #ffc107 !important; color: #212529 !important; font-weight: bold; }
+.selected-3 { background-color: #198754 !important; color: white !important; font-weight: bold; }
+.selected-4 { background-color: #0d6efd !important; color: white !important; font-weight: bold; }

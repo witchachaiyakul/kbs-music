@@ -1,0 +1,175 @@
+/* ==========================================
+   🥁 DRUM MODULE SPECIFIC STYLES
+   ========================================== */
+
+/* 1. โครงสร้างเวทีและองค์ประกอบแป้นกลอง */
+.drum-stage-container {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid #343a40;
+  border-radius: 16px;
+  margin: 0 auto;
+  user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.drum-stage-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #2c3036 0%, #111315 100%);
+  opacity: 0.9;
+}
+
+.drum-piece-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.08s ease;
+  z-index: 2;
+}
+
+.drum-piece-item .drum-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+.drum-tag {
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.drum-tag kbd {
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+}
+
+/* 2. เอฟเฟกต์เมื่อกด/ตีกลอง */
+.drum-piece-item.hit-active {
+  transform: scale(1.08) !important;
+  opacity: 0.85 !important;
+}
+
+.drum-piece-item.hit-active .drum-tag {
+  background-color: #ffeb3b !important;
+  color: #000000 !important;
+}
+
+.drum-piece-item.hit-red-circle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  height: 40%;
+  transform: translate(-50%, -50%);
+  border: 4px solid #ff0000;
+  background-color: rgba(255, 0, 0, 0.35);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 12px #ff0000;
+  z-index: 50;
+}
+
+/* 3. กรอบกล่อง Canvas กล้องสด */
+.position-relative.bg-dark.rounded-4 {
+  height: auto !important;
+  max-width: 100%;
+}
+
+/* 4. สเปกการแสดงผลแยกตามแนวตั้ง-แนวนอน (Media Queries) */
+
+/* 📱 จอมือถือแนวตั้ง (Portrait) */
+@media screen and (orientation: portrait) {
+  .position-relative.bg-dark.rounded-4 {
+    max-height: 360px !important;
+    width: 100% !important;
+    overflow: hidden;
+  }
+
+  #drumCompositeCanvas {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: 16 / 9 !important;
+    object-fit: contain;
+  }
+
+  .drum-stage-container {
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .drum-tag {
+    font-size: 0.55rem;
+    padding: 1px 5px;
+  }
+
+  .pos-kick       { top: 50%; left: 60%; width: 38%; z-index: 1; }
+  .pos-tom1       { top: 20%; left: 28%; width: 25%; z-index: 2; }
+  .pos-tom2       { top: 20%; left: 52%; width: 25%; z-index: 2; }
+  .pos-tom3       { top: 18%; left: 75%; width: 25%; z-index: 4; }
+  .pos-hihat      { top: 20%; left: 1%;  width: 28%; z-index: 3; }
+  .pos-closehihat { top: 58%; left: 1%;  width: 28%; z-index: 4; }
+  .pos-crash      { top: -4%; left: 16%; width: 24%; z-index: 3; }
+  .pos-cymbal     { top: -4%; left: 65%; width: 23%; z-index: 3; }
+  .pos-snare      { top: 52%; left: 28%; width: 35%; z-index: 5; }
+
+  /* สลับตำแหน่งเมื่อคนถนัดซ้าย (.is-left-handed) แนวตั้ง */
+  .drum-stage-container.is-left-handed .pos-kick       { left: auto; right: 60%; }
+  .drum-stage-container.is-left-handed .pos-tom1       { left: auto; right: 28%; }
+  .drum-stage-container.is-left-handed .pos-tom2       { left: auto; right: 52%; }
+  .drum-stage-container.is-left-handed .pos-tom3       { left: auto; right: 75%; }
+  .drum-stage-container.is-left-handed .pos-hihat      { left: auto; right: 1%;  }
+  .drum-stage-container.is-left-handed .pos-closehihat { left: auto; right: 1%;  }
+  .drum-stage-container.is-left-handed .pos-crash      { left: auto; right: 40%; }
+  .drum-stage-container.is-left-handed .pos-cymbal     { left: auto; right: 65%; }
+  .drum-stage-container.is-left-handed .pos-snare      { left: auto; right: 28%; }
+}
+
+/* 📲 จอมือถือแนวนอน / หน้าจอคอมพิวเตอร์ (Landscape) */
+@media screen and (orientation: landscape) {
+  .drum-stage-container {
+    max-width: 620px;
+    height: 350px;
+  }
+
+  .pos-kick       { top: 50%; left: 39%; width: 28%; z-index: 1; }
+  .pos-tom1       { top: 16%; left: 35%; width: 18%; z-index: 2; }
+  .pos-tom2       { top: 16%; left: 53%; width: 18%; z-index: 2; }
+  .pos-tom3       { top: 39%; left: 63%; width: 22%; z-index: 4; }
+  .pos-hihat      { top: 21%; left: 8%;  width: 20%; z-index: 3; }
+  .pos-closehihat { top: 50%; left: 4%;  width: 20%; z-index: 4; }
+  .pos-crash      { top: -3%; left: 19%; width: 22%; z-index: 3; }
+  .pos-cymbal     { top: 9%;  left: 69%; width: 22%; z-index: 3; }
+  .pos-snare      { top: 40%; left: 23%; width: 22%; z-index: 5; }
+
+  /* สลับตำแหน่งเมื่อคนถนัดซ้าย (.is-left-handed) แนวนอน */
+  .drum-stage-container.is-left-handed .pos-kick       { left: auto; right: 39%; }
+  .drum-stage-container.is-left-handed .pos-tom1       { left: auto; right: 35%; }
+  .drum-stage-container.is-left-handed .pos-tom2       { left: auto; right: 53%; }
+  .drum-stage-container.is-left-handed .pos-tom3       { left: auto; right: 63%; }
+  .drum-stage-container.is-left-handed .pos-hihat      { left: auto; right: 8%;  }
+  .drum-stage-container.is-left-handed .pos-closehihat { left: auto; right: 4%;  }
+  .drum-stage-container.is-left-handed .pos-crash      { left: auto; right: 19%; }
+  .drum-stage-container.is-left-handed .pos-cymbal     { left: auto; right: 69%; }
+  .drum-stage-container.is-left-handed .pos-snare      { left: auto; right: 23%; }
+}
