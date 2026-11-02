@@ -433,7 +433,7 @@ function singSaveRecordedVideo() {
       studentCode: singTargetStudentCode,
       studentName: singCurrentUserData ? singCurrentUserData.fullName : '',
       classRoom: singCurrentUserData ? singCurrentUserData.classRoom : '',
-      category: 'การร้องเพลง',
+      category: 'ร้องเพลง',
       mimeType: mimeType,
       base64: base64Data
     });
