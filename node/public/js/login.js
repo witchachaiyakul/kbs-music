@@ -7,6 +7,12 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyeSwvNSfHtXULSvj_Q
 
 let currentUserProfile = null;
 
+// Helper สำหรับปิดหน้า Loading
+function hideLoading() {
+  const loadingEl = document.getElementById("loading");
+  if (loadingEl) loadingEl.style.display = "none";
+}
+
 // 🟢 1. เริ่มต้นระบบเมื่อโหลด DOM
 document.addEventListener("DOMContentLoaded", function() {
   initLIFF();
@@ -38,13 +44,19 @@ async function apiCall(action, payload = {}) {
 function initLIFF() {
   if (typeof liff === "undefined") {
     alert("ไม่พบ LIFF SDK กรุณาเปิดผ่านแอปพลิเคชัน LINE");
+    hideLoading();
     return;
   }
   
   liff.init({ liffId: LIFF_ID })
     .then(() => {
       if (!liff.isLoggedIn()) {
-        liff.login();
+        // 🟢 แก้ไข: สั่ง login เฉพาะเมื่อเปิดผ่าน External Browser นอกแอป LINE
+        if (!liff.isInClient()) {
+          liff.login();
+        } else {
+          hideLoading();
+        }
       } else {
         liff.getProfile().then(async profile => {
           currentUserProfile = profile;
@@ -54,12 +66,14 @@ function initLIFF() {
         }).catch(err => {
           console.error("Get LINE Profile Error:", err);
           alert("ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้");
+          hideLoading(); // 🟢 แก้ไข: ปิด Loading เมื่อดึง Profile ล้มเหลว
         });
       }
     })
     .catch(err => {
       console.error("LIFF Init Error:", err);
       alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + err);
+      hideLoading(); // 🟢 แก้ไข: ปิด Loading เมื่อ Init ล้มเหลว
     });
 }
 
@@ -69,28 +83,24 @@ function handleVerifyResponse(res) {
   if (loadingEl) loadingEl.style.display = "none";
 
   if (res && res.isRegistered && res.user) {
-    // 🟢 ตรวจสอบว่าปัจจุบันอยู่หน้า index.html หรือยัง
+    // 🟢 สำคัญมาก: บันทึกข้อมูลผู้ใช้ลง localStorage เพื่อให้ auth.js ตรวจสอบผ่าน
+    localStorage.setItem("kbs_user_data", JSON.stringify(res.user));
+
     const currentPath = window.location.pathname;
     const isIndexPage = currentPath.endsWith("index.html") || currentPath === "/" || currentPath === "";
 
     if (!isIndexPage) {
-      // หากเปิดจากหน้าอื่น ให้เปลี่ยนไปหน้า index.html
       window.location.href = "index.html";
     } else {
-      // หากอยู่ที่หน้า index.html อยู่แล้ว ให้แสดงเนื้อหาหลัก (ปรับชื่อ ID ตามที่มีใน HTML)
-      const mainAppView = document.getElementById("mainAppView");
-      if (mainAppView) mainAppView.style.display = "block";
+      const mainDashboard = document.getElementById("mainDashboard");
+      if (mainDashboard) mainDashboard.style.display = "block";
     }
   } else {
-    // ❌ หากยังไม่ได้ลงทะเบียน ให้เปิดฟอร์มลงทะเบียน
+    // ❌ หากยังไม่ได้ลงทะเบียน ให้ล้างค่าเก่าป้องกันข้อมูลค้าง
+    localStorage.removeItem("kbs_user_data");
+
     const regView = document.getElementById("registerView");
     if (regView) regView.style.display = "block";
-
-    // อัปเดตรูปโปรไฟล์ LINE บนฟอร์มลงทะเบียน
-    const regUserImg = document.getElementById("regUserImg");
-    if (regUserImg && currentUserProfile && currentUserProfile.pictureUrl) {
-      regUserImg.src = currentUserProfile.pictureUrl;
-    }
 
     loadRegistrationOptions();
   }
@@ -185,18 +195,21 @@ async function handleRegister(e) {
     fullName: fullName
   });
 
-  if (res && res.success) {
-    Swal.fire({
-      title: "สำเร็จ!",
-      text: "ลงทะเบียนเรียบร้อยแล้ว กำลังนำท่านเข้าสู่ระบบ...",
-      icon: "success",
-      confirmButtonColor: "#d63384",
-      timer: 1500,
-      showConfirmButton: false
-    }).then(() => {
-      // 🟢 ลงทะเบียนสำเร็จ บังคับ Redirect เข้าหน้า index.html
-      window.location.href = "index.html";
-    });
+if (res && res.success) {
+  // 🟢 บันทึกข้อมูลผู้ใช้ที่ลงทะเบียนใหม่ลง localStorage
+  if (res.user) {
+    localStorage.setItem("kbs_user_data", JSON.stringify(res.user));
+  }
+
+  Swal.fire({
+    title: "สำเร็จ!",
+    text: "ลงทะเบียนเรียบร้อยแล้ว กำลังนำท่านเข้าสู่ระบบ...",
+    icon: "success",
+    timer: 1500,
+    showConfirmButton: false
+  }).then(() => {
+    window.location.href = "index.html";
+  });
   } else {
     Swal.fire("ข้อผิดพลาด", res ? res.message : "ลงทะเบียนไม่สำเร็จ", "error");
   }
