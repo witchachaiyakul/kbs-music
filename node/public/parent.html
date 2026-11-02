@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KBS Music - Parent Dashboard</title>
+  
+  <!-- CSS External Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Custom CSS กลาง -->
+  <link rel="stylesheet" href="css/main.css">
+
+  <!-- JS External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <!-- 🟢 PARENT DASHBOARD CONTAINER -->
+  <div id="parentDashboardView" class="container py-3 mb-4" style="max-width: 700px;">
+    
+    <!-- Header ผู้ปกครอง -->
+    <div class="profile-header d-flex align-items-center mb-3 bg-white p-3 rounded-4 shadow-sm">
+      <img id="pUserImg" src="https://via.placeholder.com/55" class="rounded-circle me-3 border border-2 border-success" width="55" height="55">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <h6 class="fw-bold mb-0 text-dark" id="pUserName">ผู้ปกครอง</h6>
+          <span class="badge bg-success rounded-pill">Parent</span>
+        </div>
+        <small class="text-muted d-block mt-1" id="pStudentChildInfo">กำลังโหลดข้อมูลนักเรียนในปกครอง...</small>
+      </div>
+    </div>
+
+    <!-- สรุปคะแนนรวม & เกรด -->
+    <div class="card card-custom p-3 bg-white mb-3 shadow-sm border-0 rounded-4 text-center">
+      <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-award text-warning me-2"></i>สรุปผลการเรียนรู้ดนตรี</h6>
+      <div class="d-flex justify-content-center gap-3 align-items-center mb-2">
+        <span id="pTotalWeightedScoreBadge" class="badge bg-primary fs-6 px-3 py-2 rounded-pill">คะแนนรวม: 0.0 / 100</span>
+        <span id="pFinalGradeText" class="badge bg-dark fs-6 px-3 py-2 rounded-pill">เกรด: 0</span>
+      </div>
+
+      <!-- Grade Segments Visual -->
+      <div id="pGradeSegmentsContainer" class="d-flex justify-content-center gap-1 mt-2">
+        <div data-pgrade="4"><div class="p-1 rounded border small fw-bold bg-light text-muted opacity-50">4.0</div></div>
+        <div data-pgrade="3.5"><div class="p-1 rounded border small fw-bold bg-light text-muted opacity-50">3.5</div></div>
+        <div data-pgrade="3"><div class="p-1 rounded border small fw-bold bg-light text-muted opacity-50">3.0</div></div>
+        <div data-pgrade="2.5"><div class="p-1 rounded border small fw-bold bg-light text-muted opacity-50">2.5</div></div>
+        <div data-pgrade="2"><div class="p-1 rounded border small fw-bold bg-light text-muted opacity-50">2.0</div></div>
+        <div data-pgrade="1.5"><div class="p-1 rounded border small fw-bold bg-light text-muted opacity-50">1.5</div></div>
+        <div data-pgrade="1"><div class="p-1 rounded border small fw-bold bg-light text-muted opacity-50">1.0</div></div>
+        <div data-pgrade="0"><div class="p-1 rounded border small fw-bold bg-light text-muted opacity-50">0</div></div>
+      </div>
+    </div>
+
+    <!-- ความก้าวหน้าแต่ละวิชา -->
+    <div class="card card-custom p-3 bg-white mb-3 shadow-sm border-0 rounded-4">
+      <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-line text-success me-2"></i>ความก้าวหน้าแต่ละวิชา</h6>
+      
+      <!-- ร้องเพลง -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between small fw-bold mb-1">
+          <span><i class="fa-solid fa-microphone text-danger me-1"></i>การร้องเพลง (น้ำหนัก 20%)</span>
+          <div>
+            <span id="pScoreSinging" class="text-primary me-2">0.0 / 20</span>
+            <span id="pValSinging" class="text-muted">0.0 / 4.0</span>
+          </div>
+        </div>
+        <div class="progress" style="height: 10px;">
+          <div id="pBarSinging" class="progress-bar bg-secondary" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- ตีกลอง -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between small fw-bold mb-1">
+          <span><i class="fa-solid fa-drum text-warning me-1"></i>การตีกลอง (น้ำหนัก 15%)</span>
+          <div>
+            <span id="pScoreDrum" class="text-primary me-2">0.0 / 15</span>
+            <span id="pValDrum" class="text-muted">0.0 / 4.0</span>
+          </div>
+        </div>
+        <div class="progress" style="height: 10px;">
+          <div id="pBarDrum" class="progress-bar bg-secondary" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- กีต้าร์ -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between small fw-bold mb-1">
+          <span><i class="fa-solid fa-guitar text-info me-1"></i>การเล่นกีต้าร์ (น้ำหนัก 15%)</span>
+          <div>
+            <span id="pScoreGuitar" class="text-primary me-2">0.0 / 15</span>
+            <span id="pValGuitar" class="text-muted">0.0 / 4.0</span>
+          </div>
+        </div>
+        <div class="progress" style="height: 10px;">
+          <div id="pBarGuitar" class="progress-bar bg-secondary" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- รวมวง -->
+      <div class="mb-2">
+        <div class="d-flex justify-content-between small fw-bold mb-1">
+          <span><i class="fa-solid fa-people-group text-success me-1"></i>การรวมวง (น้ำหนัก 50%)</span>
+          <div>
+            <span id="pScoreEnsemble" class="text-primary me-2">0.0 / 50</span>
+            <span id="pValEnsemble" class="text-muted">0.0 / 4.0</span>
+          </div>
+        </div>
+        <div class="progress" style="height: 10px;">
+          <div id="pBarEnsemble" class="progress-bar bg-secondary" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ปุ่มเข้าสู่การประเมินวิชาต่างๆ -->
+    <div class="d-grid gap-2">
+      <button onclick="goToParentSinging()" class="btn btn-outline-danger py-2 fw-bold rounded-3">
+        <i class="fa-solid fa-microphone me-2"></i>เข้าสู่การประเมินวิชาร้องเพลง (ผู้ปกครอง)
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading" class="position-fixed top-0 start-0 w-100 h-100 align-items-center justify-content-center bg-dark bg-opacity-50" style="display: none; z-index: 2000;">
+    <div class="bg-white rounded-4 p-4 text-center shadow">
+      <div class="spinner-border text-success mb-2" role="status"></div>
+      <div id="loadingText">กำลังโหลด...</div>
+    </div>
+  </div>
+
+  <!-- JS Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/parent.js"></script>
+</body>
+</html>

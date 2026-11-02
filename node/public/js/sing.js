@@ -1,6 +1,7 @@
 // ==========================================
 // 🎤 SINGING EVALUATION MODULE LOGIC (sing.js)
 // ==========================================
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyeSwvNSfHtXULSvj_QLLYACKYfZ2Yf0T4Aqa3fFroDF3ugCxJ-1oYRItsZzkAyAqIa/exec";
 
 let singCurrentUserData = {
   role: "Student",
@@ -28,27 +29,45 @@ let singIsRecording = false;
 document.addEventListener("DOMContentLoaded", function() {
   const urlParams = new URLSearchParams(window.location.search);
   const studentCode = urlParams.get("studentCode") || "";
+  const role = urlParams.get("role") || "Student"; // 👈 รองรับการส่งบทบาท Teacher/Parent ผ่าน URL
 
   if (studentCode) {
     singTargetStudentCode = studentCode;
     singCurrentUserData.studentCode = studentCode;
+    singCurrentUserData.role = role;
 
     // ดึงข้อมูลการประเมินวิชาร้องเพลง
     singFetchAndSetupEvaluation(studentCode);
   }
 });
 
-// 🟢 2. ฟังก์ชันเรียก API เฉพาะของโมดูลร้องเพลง (อ้างอิง GAS_API_URL จากสคริปต์กลาง)
+// 🟢 2. ฟังก์ชันเรียก API ปลอดภัย ดักจับ Error ป้องกัน SyntaxError JSON
 async function singApiCall(action, payload = {}) {
   try {
     const apiUrl = typeof GAS_API_URL !== "undefined" ? GAS_API_URL : "";
+    if (!apiUrl) {
+      return { success: false, message: "ยังไม่ได้กำหนด GAS_API_URL ในระบบ" };
+    }
+
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ action: action, payload: payload }),
       redirect: "follow"
     });
-    return await response.json();
+
+    const rawText = await response.text();
+    if (!rawText) {
+      return { success: false, message: "เซิร์ฟเวอร์ไม่ตอบกลับข้อมูล (ไฟล์วิดีโออาจมีขนาดใหญ่เกินไป)" };
+    }
+
+    try {
+      return JSON.parse(rawText);
+    } catch (parseErr) {
+      console.error("Server Response Error (Non-JSON):", rawText);
+      return { success: false, message: "ตอบกลับจากเซิร์ฟเวอร์ไม่ถูกต้อง โปรดเช็กการ Deploy ใน Apps Script" };
+    }
+
   } catch (err) {
     console.error("Singing API Error:", err);
     return { success: false, message: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้: " + err.toString() };
@@ -115,7 +134,7 @@ async function singFetchAndSetupEvaluation(studentCode) {
     const descEl = document.getElementById("singEvalAlertDesc");
     const btnContainer = document.getElementById("singSaveEvalBtnContainer");
 
-    // 🟢 ล้างค่าคะแนนในตัวแปรหน่วยความจำทุกครั้งที่โหลดข้อมูลใหม่
+    // ล้างค่าคะแนนในตัวแปรหน่วยความจำทุกครั้งที่โหลดข้อมูลใหม่
     singSelectedScores = { rhythm: 0, melody: 0, expression: 0 };
     singIsEvaluationLocked = false;
 
@@ -154,127 +173,7 @@ async function singFetchAndSetupEvaluation(studentCode) {
       });
     }
 
-    // 🟢 แสดงผลและวาด Radar Chart เฉพาะเมื่อมีส่วนประกอบใน DOM
-    const radarSection = document.getElementById("singRadarSection");
-    if (radarSection) {
-      radarSection.classList.remove("d-none");
-
-      requestAnimationFrame(() => {
-        if (typeof singInitRadarCharts === 'function') {
-          singInitRadarCharts(
-            res.teacherScores || [0, 0, 0],
-            res.studentScores || [0, 0, 0],
-            res.parentScores || [0, 0, 0]
-          );
-        }
-      });
-    }
-
-  } catch (err) {
-    console.error("💥 [EXCEPTION ERROR]:", err);
-    if (loadingEl) loadingEl.style.display = "none";
-    if (videoContainer) videoContainer.classList.add("d-none");
-    if (noVideoAlert) noVideoAlert.classList.remove("d-none");
-  }
-}async function singFetchAndSetupEvaluation(studentCode) {
-  const loadingText = document.getElementById("loadingText");
-  const loadingEl = document.getElementById("loading");
-
-  if (loadingText) loadingText.textContent = "กำลังดึงข้อมูลการประเมิน (การร้องเพลง)...";
-  if (loadingEl) loadingEl.style.display = "flex";
-
-  const videoContainer = document.getElementById("singVideoContainer");
-  const noVideoAlert = document.getElementById("singNoVideoAlert");
-  const videoFrame = document.getElementById("singVideoPlayerFrame");
-
-  try {
-    const res = await singApiCall("getSingingEvaluationStatus", {
-      studentCode: studentCode,
-      category: "การร้องเพลง",
-      role: singCurrentUserData ? singCurrentUserData.role : 'Student'
-    });
-
-    if (loadingEl) loadingEl.style.display = "none";
-
-    if (!res || !res.success) {
-      if (videoContainer) videoContainer.classList.add("d-none");
-      if (noVideoAlert) noVideoAlert.classList.remove("d-none");
-      if (videoFrame) videoFrame.src = "";
-      Swal.fire("แจ้งเตือน", res ? res.message : "ไม่สามารถดึงข้อมูลวิชาการร้องเพลงได้", "warning");
-      return;
-    }
-
-    // อัปเดตชื่อนักเรียนจากข้อมูลจริงที่ API ส่งกลับมา
-    if (res.studentName) {
-      singCurrentUserData.fullName = res.studentName;
-      const nameEl = document.getElementById("singStudentName");
-      if (nameEl) nameEl.innerHTML = `<i class="fa-solid fa-microphone text-danger me-2"></i>${res.studentName}`;
-    }
-
-    // ตรวจหา File ID จากข้อมูลในระบบ
-    let fileId = res.latestFileId;
-    if (!fileId && res.latestVideoUrl) {
-      const match = res.latestVideoUrl.match(/[\/=]([a-zA-Z0-9_-]{25,})/);
-      if (match) fileId = match[1];
-    }
-
-    // แสดงผลเล่นวิดีโอ
-    if (fileId && videoContainer && videoFrame && noVideoAlert) {
-      videoFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
-      videoContainer.classList.remove("d-none");
-      noVideoAlert.classList.add("d-none");
-    } else if (videoContainer && noVideoAlert) {
-      if (videoFrame) videoFrame.src = "";
-      videoContainer.classList.add("d-none");
-      noVideoAlert.classList.remove("d-none");
-    }
-
-    // อัปเดตตาราง Rubric & สถานะประเมิน
-    const alertEl = document.getElementById("singEvalStatusAlert");
-    const titleEl = document.getElementById("singEvalAlertTitle");
-    const descEl = document.getElementById("singEvalAlertDesc");
-    const btnContainer = document.getElementById("singSaveEvalBtnContainer");
-
-    // 🟢 ล้างค่าคะแนนในตัวแปรหน่วยความจำทุกครั้งที่โหลดข้อมูลใหม่
-    singSelectedScores = { rhythm: 0, melody: 0, expression: 0 };
-    singIsEvaluationLocked = false;
-
-    if (res.isEvaluated) {
-      singIsEvaluationLocked = true;
-
-      if (alertEl) alertEl.className = "alert alert-success rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
-      if (titleEl) titleEl.textContent = "ได้รับการประเมินเรียบร้อยแล้ว";
-      if (descEl) descEl.textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
-      if (btnContainer) btnContainer.classList.add("d-none");
-
-      const userRole = singCurrentUserData ? singCurrentUserData.role : 'Student';
-      const myScores = userRole === "Teacher" ? res.teacherScores : (userRole === "Parent" ? res.parentScores : res.studentScores);
-
-      if (myScores) {
-        ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
-          const lvl = myScores[idx];
-          if (lvl > 0) {
-            singSelectedScores[row] = lvl;
-            let cell = document.querySelector(`.rubric-cell[data-row="${row}"][data-level="${lvl}"]`);
-            if (cell) cell.classList.add(`selected-${lvl}`);
-          }
-        });
-      }
-
-      document.querySelectorAll(`.rubric-cell`).forEach(c => c.classList.add('locked'));
-
-    } else {
-      if (alertEl) alertEl.className = "alert alert-warning rounded-4 shadow-sm mb-3 d-flex align-items-center gap-2";
-      if (titleEl) titleEl.textContent = "ยังไม่ได้ประเมิน";
-      if (descEl) descEl.textContent = "กรุณารับชมวิดีโอและทำการประเมินในตารางด้านล่าง";
-      if (btnContainer) btnContainer.classList.remove("d-none");
-
-      document.querySelectorAll(`.rubric-cell`).forEach(c => {
-        c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4');
-      });
-    }
-
-    // 🟢 แสดงผลและวาด Radar Chart เฉพาะเมื่อมีส่วนประกอบใน DOM
+    // แสดงผลและวาด Radar Chart เฉพาะเมื่อมีส่วนประกอบใน DOM
     const radarSection = document.getElementById("singRadarSection");
     if (radarSection) {
       radarSection.classList.remove("d-none");
@@ -446,6 +345,7 @@ function singInitRadarCharts(tScores, sScores, pScores) {
 // 🟢 6. WEBCAM LOGIC & VIDEO UPLOAD
 async function singStartCamera() {
   try {
+    // 🟢 คงสัดส่วนกล้องไว้ที่ 640x480 (4:3) ตามเดิม
     const constraints = { video: { width: { ideal: 640 }, height: { ideal: 480 } }, audio: true };
     singMediaStream = await navigator.mediaDevices.getUserMedia(constraints);
     
@@ -473,12 +373,13 @@ function singToggleRecording() {
   if (!singIsRecording) {
     singRecordedChunks = [];
     
-    let options = {};
+    // 👈 บีบอัดวิดีโอ (Bitrate 250kbps) ป้องกัน Payload เกินขนาดส่งผ่าน Apps Script
+    let options = { videoBitsPerSecond: 250000 };
     if (typeof MediaRecorder.isTypeSupported === 'function') {
       if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
-        options = { mimeType: 'video/webm;codecs=vp8,opus', videoBitsPerSecond: 500000 };
+        options.mimeType = 'video/webm;codecs=vp8,opus';
       } else if (MediaRecorder.isTypeSupported('video/mp4')) {
-        options = { mimeType: 'video/mp4' };
+        options.mimeType = 'video/mp4';
       }
     }
 

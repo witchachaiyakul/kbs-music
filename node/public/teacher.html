@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KBS Music - Teacher Dashboard</title>
+  
+  <!-- CSS External Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/main.css">
+
+  <!-- JS External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <!-- Main TEACHER DASHBOARD Container -->
+  <div id="teacherDashboardView" class="container py-3 mb-4" style="max-width: 700px;">
+    
+    <!-- Profile Header -->
+    <div class="profile-header d-flex align-items-center mb-3 bg-white p-3 rounded-4 shadow-sm">
+      <img id="tUserImg" src="https://via.placeholder.com/55" class="rounded-circle me-3 border border-2 border-danger" width="55" height="55">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <h6 class="fw-bold mb-0 text-dark" id="tUserName">ครูประจำวิชา</h6>
+          <span class="badge bg-danger rounded-pill">Teacher</span>
+        </div>
+        <small class="text-muted d-block mt-1">จัดการผลการประเมินนักเรียน</small>
+      </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card card-custom p-3 bg-white mb-3 shadow-sm border-0 rounded-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-bold text-dark mb-0">
+          <i class="fa-solid fa-users text-danger me-2"></i>ตารางติดตามการประเมินนักเรียน
+        </h6>
+        <div style="width: 160px;">
+          <select id="tFilterClassroom" class="form-select form-select-sm fw-bold" onchange="filterTeacherTable()">
+            <option value="ALL">-- ทั้งหมด --</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle text-center small mb-0">
+          <thead class="table-danger">
+            <tr>
+              <th>ID</th>
+              <th>ชื่อ-นามสกุล</th>
+              <th>ห้อง</th>
+              <th>เลขที่</th>
+              <th>ร้องเพลง</th>
+              <th>เล่นกีต้าร์</th>
+              <th>รวมวง</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="tStudentTableBody">
+            <tr><td colspan="8" class="py-3 text-muted">กำลังโหลดข้อมูล...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>  
+
+  <!-- JS Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/teacher.js"></script>
+</body>
+</html>
