@@ -50,13 +50,16 @@ function initLIFF() {
   
   liff.init({ liffId: LIFF_ID })
     .then(() => {
+      // 🟢 1. เช็คว่าผู้ใช้ล็อกอิน LINE แล้วหรือยัง
       if (!liff.isLoggedIn()) {
-        // 🟢 หากยังไม่ได้ Log in LINE (รวมถึงเปิดบน PC) ให้พาไปหน้าล็อกอิน LINE ก่อนเสมอ
+        // หากยังไม่ได้ล็อกอิน LINE บังคับเรียกหน้า Login ของ LINE ทันที (ห้ามแสดงฟอร์มลงทะเบียน)
         liff.login();
       } else {
-        // 🟢 เมื่อ Log in LINE เรียบร้อยแล้ว จึงดึง Profile มาใช้งาน
+        // 🟢 2. ดึงโปรไฟล์ LINE เมื่อล็อกอินสำเร็จแล้วเท่านั้น
         liff.getProfile().then(async profile => {
           currentUserProfile = profile;
+          
+          // ส่งโปรไฟล์ไปเช็คในฐานข้อมูล Google Sheets ผ่าน GAS
           const res = await apiCall("verifyAndLogAccess", profile);
           handleVerifyResponse(res);
         }).catch(err => {
@@ -75,30 +78,32 @@ function initLIFF() {
 
 // 🟢 4. ตรวจสอบการลงทะเบียน และควบคุมทิศทาง (Routing)
 function handleVerifyResponse(res) {
-  const loadingEl = document.getElementById("loading");
-  if (loadingEl) loadingEl.style.display = "none";
+  hideLoading();
 
-  if (res && res.isRegistered && res.user) {
-    // 🟢 สำคัญมาก: บันทึกข้อมูลผู้ใช้ลง localStorage เพื่อให้ auth.js ตรวจสอบผ่าน
+  if (res && res.success && res.isRegistered && res.user) {
+    // ✅ ลงทะเบียนแล้ว: บันทึกข้อมูลลง localStorage แล้วพาไปหน้า index.html
     localStorage.setItem("kbs_user_data", JSON.stringify(res.user));
-
-    const currentPath = window.location.pathname;
-    const isIndexPage = currentPath.endsWith("index.html") || currentPath === "/" || currentPath === "";
-
-    if (!isIndexPage) {
+    
+    if (!window.location.pathname.endsWith("index.html")) {
       window.location.href = "index.html";
-    } else {
-      const mainDashboard = document.getElementById("mainDashboard");
-      if (mainDashboard) mainDashboard.style.display = "block";
     }
-  } else {
-    // ❌ หากยังไม่ได้ลงทะเบียน ให้ล้างค่าเก่าป้องกันข้อมูลค้าง
+  } else if (res && res.success && !res.isRegistered) {
+    // ❌ ล็อกอิน LINE ผ่านแล้ว แต่ยังไม่ได้ผูกข้อมูลนักเรียน: เปิดฟอร์มลงทะเบียน
     localStorage.removeItem("kbs_user_data");
-
+    
     const regView = document.getElementById("registerView");
     if (regView) regView.style.display = "block";
 
+    // แสดงรูปโปรไฟล์ที่ดึงมาจาก LINE
+    const regUserImg = document.getElementById("regUserImg");
+    if (regUserImg && currentUserProfile && currentUserProfile.pictureUrl) {
+      regUserImg.src = currentUserProfile.pictureUrl;
+    }
+
     loadRegistrationOptions();
+  } else {
+    // ⚠️ เกิดข้อผิดพลาด/ติดต่อ GAS ไม่ได้: ให้แจ้งเตือนโดยไม่เปิดฟอร์ม
+    Swal.fire("ข้อผิดพลาด", res ? res.message : "ไม่สามารถตรวจสอบสิทธิ์การใช้งานได้", "error");
   }
 }
 

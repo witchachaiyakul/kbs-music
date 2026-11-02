@@ -1,8 +1,3 @@
-// ==========================================
-// 🏠 INDEX & STUDENT DASHBOARD MODULE (js/index.js)
-// ==========================================
-
-// 🟢 1. ตั้งค่าการเชื่อมต่อ และโหมดทดสอบ
 const IS_DEV = false; // 👈 เปลี่ยนเป็น true เพื่อทดสอบแบบไม่ผ่าน LINE LIFF / เปลี่ยนเป็น false เมื่อใช้งานจริง
 const DEV_ROLE = "Student"; // "Student", "Teacher", หรือ "Parent"
 const DEV_STUDENT_ID = "1"; // รหัสนักเรียนสำหรับใช้ทดสอบ
@@ -83,19 +78,32 @@ async function runDevMode() {
 // 🟢 5. เริ่มการทำงานของ LINE LIFF
 function initLIFF() {
   if (typeof liff === "undefined") {
-    alert("ไม่พบ LIFF SDK กรุณาเปิดผ่านแอปพลิเคชัน LINE");
+    showLIFFError("ไม่พบ LIFF SDK กรุณาเปิดผ่านแอปพลิเคชัน LINE");
     return;
   }
 
   liff.init({ liffId: LIFF_ID })
     .then(() => {
       if (!liff.isLoggedIn()) {
-        window.location.href = "login.html";
+        // 🟢 แก้ไข: หากยังไม่ล็อกอิน ให้เรียกหน้าล็อกอินของ LINE แทนการเด้งไป login.html
+        liff.login();
       } else {
         liff.getProfile().then(async profile => {
+          if (!profile || !profile.userId) {
+            showLIFFError("ไม่พบ LINE user ID กรุณาเข้าสู่ระบบผ่าน LINE ใหม่อีกครั้ง");
+            return;
+          }
+
           currentUserProfile = profile;
           const res = await apiCall("verifyAndLogAccess", profile);
-          
+
+          if (!res || !res.success) {
+            showLIFFError(res && res.message
+              ? res.message
+              : "ไม่สามารถตรวจสอบ LINE user ID ได้ กรุณาลองใหม่อีกครั้ง");
+            return;
+          }
+
           if (res && res.isRegistered && res.user) {
             currentUserData = res.user;
 
@@ -108,19 +116,30 @@ function initLIFF() {
               setupStudentUI();
             }
           } else {
-            // ยังไม่เคยลงทะเบียน ให้เด้งไปหน้า login.html
+            // ผ่าน LIFF และตรวจสอบ LINE user ID แล้ว แต่ยังไม่พบข้อมูลลงทะเบียน
             window.location.href = "login.html";
           }
         }).catch(err => {
           console.error("LIFF Get Profile Error:", err);
-          window.location.href = "login.html";
+          showLIFFError("ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้ กรุณาลองเข้าใช้งานใหม่อีกครั้ง");
         });
       }
     })
     .catch(err => {
       console.error("LIFF Init Error:", err);
-      alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + err);
+      showLIFFError("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + err);
     });
+}
+
+function showLIFFError(message) {
+  const loadingEl = document.getElementById("loading");
+  if (loadingEl) loadingEl.style.display = "none";
+
+  if (typeof Swal !== "undefined") {
+    Swal.fire("ไม่สามารถเข้าใช้งานได้", message, "error");
+  } else {
+    alert(message);
+  }
 }
 
 // 🟢 6. แสดงผล UI และดึงความก้าวหน้าของนักเรียน
