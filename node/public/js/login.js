@@ -12,6 +12,12 @@ document.addEventListener("DOMContentLoaded", function() {
   initLIFF();
 });
 
+// Helper สำหรับซ่อนหน้า Loading
+function hideLoading() {
+  const loadingEl = document.getElementById("loading");
+  if (loadingEl) loadingEl.style.display = "none";
+}
+
 // 🟢 2. ฟังก์ชันเรียก API ไปยัง Google Apps Script
 async function apiCall(action, payload = {}) {
   try {
@@ -38,13 +44,19 @@ async function apiCall(action, payload = {}) {
 function initLIFF() {
   if (typeof liff === "undefined") {
     alert("ไม่พบ LIFF SDK กรุณาเปิดผ่านแอปพลิเคชัน LINE");
+    hideLoading();
     return;
   }
   
   liff.init({ liffId: LIFF_ID })
     .then(() => {
       if (!liff.isLoggedIn()) {
-        liff.login();
+        // 🟢 แก้ไข: สั่ง login เฉพาะเมื่อเปิดผ่าน External Browser นอกแอป LINE
+        if (!liff.isInClient()) {
+          liff.login();
+        } else {
+          hideLoading();
+        }
       } else {
         liff.getProfile().then(async profile => {
           currentUserProfile = profile;
@@ -54,23 +66,33 @@ function initLIFF() {
         }).catch(err => {
           console.error("Get LINE Profile Error:", err);
           alert("ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้");
+          hideLoading(); // 🟢 แก้ไข: ปิด Loading เมื่อดึง Profile ล้มเหลว
         });
       }
     })
     .catch(err => {
       console.error("LIFF Init Error:", err);
       alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + err);
+      hideLoading(); // 🟢 แก้ไข: ปิด Loading เมื่อ Init ล้มเหลว
     });
 }
 
 // 🟢 4. ตรวจสอบการลงทะเบียน และควบคุมทิศทาง (Routing)
 function handleVerifyResponse(res) {
-  const loadingEl = document.getElementById("loading");
-  if (loadingEl) loadingEl.style.display = "none";
+  hideLoading();
 
   if (res && res.isRegistered && res.user) {
-    // ✅ หากลงทะเบียนแล้ว สั่ง Redirect ไปยังหน้า index.html ทันที
-    window.location.href = "index.html";
+    // 🟢 แก้ไข: เช็คก่อนว่าปัจจุบันไม่อยู่ที่หน้า index.html ถึงจะทำการ Redirect
+    const currentPath = window.location.pathname;
+    const isIndexPage = currentPath.endsWith("index.html") || currentPath === "/" || currentPath === "";
+
+    if (!isIndexPage) {
+      window.location.href = "index.html";
+    } else {
+      // หากอยู่ที่หน้า index.html อยู่แล้ว ให้เปิดแสดงผลส่วนหน้าแอปหลัก
+      const mainAppView = document.getElementById("mainAppView");
+      if (mainAppView) mainAppView.style.display = "block";
+    }
   } else {
     // ❌ หากยังไม่ได้ลงทะเบียน ให้เปิดฟอร์มลงทะเบียน
     const regView = document.getElementById("registerView");
