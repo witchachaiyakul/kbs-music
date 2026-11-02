@@ -51,29 +51,25 @@ function initLIFF() {
   liff.init({ liffId: LIFF_ID })
     .then(() => {
       if (!liff.isLoggedIn()) {
-        // 🟢 แก้ไข: สั่ง login เฉพาะเมื่อเปิดผ่าน External Browser นอกแอป LINE
-        if (!liff.isInClient()) {
-          liff.login();
-        } else {
-          hideLoading();
-        }
+        // 🟢 หากยังไม่ได้ Log in LINE (รวมถึงเปิดบน PC) ให้พาไปหน้าล็อกอิน LINE ก่อนเสมอ
+        liff.login();
       } else {
+        // 🟢 เมื่อ Log in LINE เรียบร้อยแล้ว จึงดึง Profile มาใช้งาน
         liff.getProfile().then(async profile => {
           currentUserProfile = profile;
-          // ตรวจสอบสิทธิเข้าใช้งานและสถานะการลงทะเบียนจากฐานข้อมูล
           const res = await apiCall("verifyAndLogAccess", profile);
           handleVerifyResponse(res);
         }).catch(err => {
           console.error("Get LINE Profile Error:", err);
           alert("ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้");
-          hideLoading(); // 🟢 แก้ไข: ปิด Loading เมื่อดึง Profile ล้มเหลว
+          hideLoading();
         });
       }
     })
     .catch(err => {
       console.error("LIFF Init Error:", err);
       alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + err);
-      hideLoading(); // 🟢 แก้ไข: ปิด Loading เมื่อ Init ล้มเหลว
+      hideLoading();
     });
 }
 
