@@ -110,6 +110,11 @@ async function singFetchAndSetupEvaluation(studentCode) {
       if (nameEl) nameEl.innerHTML = `<i class="fa-solid fa-microphone text-danger me-2"></i>${res.studentName}`;
     }
 
+    // 🟢 เพิ่มการเก็บค่าห้องเรียนลงใน singCurrentUserData (ตรวจสอบชื่อฟิลด์จาก Apps Script ให้ตรงกัน เช่น res.classRoom หรือ res.classroom)
+    if (res.classRoom || res.classroom) {
+      singCurrentUserData.classRoom = res.classRoom || res.classroom;
+    }
+
     // ตรวจหา File ID จากข้อมูลในระบบ
     let fileId = res.latestFileId;
     if (!fileId && res.latestVideoUrl) {
@@ -428,7 +433,7 @@ function singSaveRecordedVideo() {
       studentCode: singTargetStudentCode,
       studentName: singCurrentUserData ? singCurrentUserData.fullName : '',
       classRoom: singCurrentUserData ? singCurrentUserData.classRoom : '',
-      category: 'การร้องเพลง',
+      category: 'ร้องเพลง',
       mimeType: mimeType,
       base64: base64Data
     });
