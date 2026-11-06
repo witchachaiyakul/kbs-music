@@ -40,7 +40,6 @@ async function apiCall(action, payload = {}) {
   }
 }
 
-// 🟢 3. เริ่มการทำงานของ LINE LIFF
 async function initLIFF() {
   // 1. ตรวจสอบการโหลด LIFF SDK
   if (typeof liff === "undefined") {
