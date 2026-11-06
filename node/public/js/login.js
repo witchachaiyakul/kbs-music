@@ -41,57 +41,77 @@ async function apiCall(action, payload = {}) {
 }
 
 // 🟢 3. เริ่มการทำงานของ LINE LIFF
-function initLIFF() {
+async function initLIFF() {
+  // 1. ตรวจสอบการโหลด LIFF SDK
   if (typeof liff === "undefined") {
     alert("ไม่พบ LIFF SDK กรุณาเปิดผ่านแอปพลิเคชัน LINE");
     hideLoading();
     return;
   }
-  
-  liff.init({ liffId: LIFF_ID })
-    .then(() => {
-      // 🟢 1. เช็คว่าผู้ใช้ล็อกอิน LINE แล้วหรือยัง
-      if (!liff.isLoggedIn()) {
-        // หากยังไม่ได้ล็อกอิน LINE บังคับเรียกหน้า Login ของ LINE ทันที (ห้ามแสดงฟอร์มลงทะเบียน)
-        liff.login();
-      } else {
-        // 🟢 2. ดึงโปรไฟล์ LINE เมื่อล็อกอินสำเร็จแล้วเท่านั้น
-        liff.getProfile().then(async profile => {
-          currentUserProfile = profile;
-          
-          // ส่งโปรไฟล์ไปเช็คในฐานข้อมูล Google Sheets ผ่าน GAS
-          const res = await apiCall("verifyAndLogAccess", profile);
-          handleVerifyResponse(res);
-        }).catch(err => {
-          console.error("Get LINE Profile Error:", err);
-          alert("ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้");
-          hideLoading();
-        });
-      }
-    })
-    .catch(err => {
-      console.error("LIFF Init Error:", err);
-      alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + err);
-      hideLoading();
-    });
+
+  try {
+    // 2. เริ่มต้นระบบ LIFF
+    await liff.init({ liffId: LIFF_ID });
+
+    // 3. ตรวจสอบการล็อกอิน
+    if (!liff.isLoggedIn()) {
+      // ระบุ redirectUri ให้พากลับมายัง URL ปัจจุบันอย่างถูกต้อง
+      liff.login({ redirectUri: window.location.href });
+      return; 
+    }
+
+    // 4. ดึงข้อมูล Profile ของผู้ใช้ LINE
+    const profile = await liff.getProfile();
+    currentUserProfile = profile;
+
+    // 5. ส่งโปรไฟล์ไปตรวจสอบผ่าน GAS API
+    const res = await apiCall("verifyAndLogAccess", profile);
+    handleVerifyResponse(res);
+
+  } catch (err) {
+    console.error("LIFF Execution Error:", err);
+    alert("เกิดข้อผิดพลาดในการเชื่อมต่อ LINE: " + (err.message || err));
+  } finally {
+    // 6. ปิดหน้า Loading เสมอ ไม่ว่าจะทำงานสำเร็จหรือเกิดข้อผิดพลาด
+    hideLoading();
+  }
 }
 
 // 🟢 4. ตรวจสอบการลงทะเบียน และควบคุมทิศทาง (Routing)
 function handleVerifyResponse(res) {
+  // ซ่อน Loading Screen
   hideLoading();
 
+  const regView = document.getElementById("registerView");
+  const mainView = document.getElementById("mainView"); // สมมติว่ามี Container หลักของหน้า index
+
   if (res && res.success && res.isRegistered && res.user) {
-    // ✅ ลงทะเบียนแล้ว: บันทึกข้อมูลลง localStorage แล้วพาไปหน้า index.html
+    // ✅ 1. กรณีลงทะเบียนแล้ว: บันทึกข้อมูลลง localStorage
     localStorage.setItem("kbs_user_data", JSON.stringify(res.user));
-    
-    if (!window.location.pathname.endsWith("index.html")) {
+
+    // เช็คว่าอยู่หน้าแรกแล้วหรือยัง (รองรับทั้ง / และ /index.html เพื่อป้องกัน Loop)
+    const isAtHomePage = 
+      window.location.pathname === "/" || 
+      window.location.pathname.endsWith("index.html") || 
+      window.location.pathname === "";
+
+    if (!isAtHomePage) {
+      // ย้ายไปหน้า index.html เฉพาะเมื่อเปิดจากหน้าอื่นเท่านั้น
       window.location.href = "index.html";
+    } else {
+      // หากอยู่ที่หน้าหลักอยู่แล้ว ให้สลับหน้าจอ (ซ่อนฟอร์มสมัคร แสดงหน้าหลัก)
+      if (regView) regView.style.display = "none";
+      if (mainView) mainView.style.display = "block";
+      
+      // เรียกฟังก์ชันเริ่มการทำงานของหน้าหลัก (ถ้ามี)
+      if (typeof renderDashboard === "function") renderDashboard(res.user);
     }
+
   } else if (res && res.success && !res.isRegistered) {
-    // ❌ ล็อกอิน LINE ผ่านแล้ว แต่ยังไม่ได้ผูกข้อมูลนักเรียน: เปิดฟอร์มลงทะเบียน
+    // ❌ 2. ล็อกอิน LINE ผ่านแล้ว แต่ยังไม่ได้ลงทะเบียน: แสดงฟอร์มลงทะเบียน
     localStorage.removeItem("kbs_user_data");
-    
-    const regView = document.getElementById("registerView");
+
+    if (mainView) mainView.style.display = "none";
     if (regView) regView.style.display = "block";
 
     // แสดงรูปโปรไฟล์ที่ดึงมาจาก LINE
@@ -100,10 +120,23 @@ function handleVerifyResponse(res) {
       regUserImg.src = currentUserProfile.pictureUrl;
     }
 
-    loadRegistrationOptions();
+    // โหลดตัวเลือกสำหรับฟอร์มลงทะเบียน
+    if (typeof loadRegistrationOptions === "function") {
+      loadRegistrationOptions();
+    }
+
   } else {
-    // ⚠️ เกิดข้อผิดพลาด/ติดต่อ GAS ไม่ได้: ให้แจ้งเตือนโดยไม่เปิดฟอร์ม
-    Swal.fire("ข้อผิดพลาด", res ? res.message : "ไม่สามารถตรวจสอบสิทธิ์การใช้งานได้", "error");
+    // ⚠️ 3. เกิดข้อผิดพลาด/ติดต่อ GAS ไม่ได้: แจ้งเตือนข้อผิดพลาด
+    if (regView) regView.style.display = "none";
+    if (mainView) mainView.style.display = "none";
+
+    const errorMsg = (res && res.message) ? res.message : "ไม่สามารถตรวจสอบสิทธิ์การใช้งานได้";
+    
+    if (typeof Swal !== "undefined") {
+      Swal.fire("ข้อผิดพลาด", errorMsg, "error");
+    } else {
+      alert("ข้อผิดพลาด: " + errorMsg);
+    }
   }
 }
 
