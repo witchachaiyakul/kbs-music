@@ -86,6 +86,10 @@ async function singFetchAndSetupEvaluation(studentCode) {
   const noVideoAlert = document.getElementById("singNoVideoAlert");
   const videoFrame = document.getElementById("singVideoPlayerFrame");
 
+  // Elements สำหรับตรวจสอบและสลับแสดงผลสถานะหมดเวลาส่งงาน
+  const deadlineAlert = document.getElementById("singDeadlineAlert");
+  const actionButtonsContainer = document.getElementById("singActionButtonsContainer");
+
   try {
     const res = await singApiCall("getSingingEvaluationStatus", {
       studentCode: studentCode,
@@ -103,19 +107,27 @@ async function singFetchAndSetupEvaluation(studentCode) {
       return;
     }
 
-    // อัปเดตชื่อนักเรียนจากข้อมูลจริงที่ API ส่งกลับมา
+    // 🟢 1. ตรวจสอบสถานะการปิดรับส่งงาน (คอลัมน์ F ในชีต list)
+    if (res.isDeadlineClosed) {
+      if (deadlineAlert) deadlineAlert.classList.remove("d-none");
+      if (actionButtonsContainer) actionButtonsContainer.classList.add("d-none");
+    } else {
+      if (deadlineAlert) deadlineAlert.classList.add("d-none");
+      if (actionButtonsContainer) actionButtonsContainer.classList.remove("d-none");
+    }
+
+    // 🟢 2. อัปเดตชื่อนักเรียนและห้องเรียนจากข้อมูลจริงที่ API ส่งกลับมา
     if (res.studentName) {
       singCurrentUserData.fullName = res.studentName;
       const nameEl = document.getElementById("singStudentName");
       if (nameEl) nameEl.innerHTML = `<i class="fa-solid fa-microphone text-danger me-2"></i>${res.studentName}`;
     }
 
-    // 🟢 เพิ่มการเก็บค่าห้องเรียนลงใน singCurrentUserData (ตรวจสอบชื่อฟิลด์จาก Apps Script ให้ตรงกัน เช่น res.classRoom หรือ res.classroom)
     if (res.classRoom || res.classroom) {
       singCurrentUserData.classRoom = res.classRoom || res.classroom;
     }
 
-    // ตรวจหา File ID จากข้อมูลในระบบ
+    // 🟢 3. ตรวจหา File ID จากข้อมูลในระบบ
     let fileId = res.latestFileId;
     if (!fileId && res.latestVideoUrl) {
       const match = res.latestVideoUrl.match(/[\/=]([a-zA-Z0-9_-]{25,})/);
@@ -133,7 +145,7 @@ async function singFetchAndSetupEvaluation(studentCode) {
       noVideoAlert.classList.remove("d-none");
     }
 
-    // อัปเดตตาราง Rubric & สถานะประเมิน
+    // 🟢 4. อัปเดตตาราง Rubric & สถานะประเมิน
     const alertEl = document.getElementById("singEvalStatusAlert");
     const titleEl = document.getElementById("singEvalAlertTitle");
     const descEl = document.getElementById("singEvalAlertDesc");
@@ -178,7 +190,7 @@ async function singFetchAndSetupEvaluation(studentCode) {
       });
     }
 
-    // แสดงผลและวาด Radar Chart เฉพาะเมื่อมีส่วนประกอบใน DOM
+    // 🟢 5. แสดงผลและวาด Radar Chart เฉพาะเมื่อมีส่วนประกอบใน DOM
     const radarSection = document.getElementById("singRadarSection");
     if (radarSection) {
       radarSection.classList.remove("d-none");
@@ -259,11 +271,15 @@ function singConfirmSubmitEvaluation() {
       if (loadingText) loadingText.textContent = "กำลังบันทึกผลการประเมิน...";
       if (loadingEl) loadingEl.style.display = "flex";
 
-      const res = await singApiCall("saveSingingEvaluation", {
+      // 🟢 แก้ไข: เปลี่ยน action เป็น "submitSingingEvaluation" และส่งคะแนนแยกทั้ง 3 ด้าน
+      const res = await singApiCall("submitSingingEvaluation", {
         studentCode: singTargetStudentCode,
         category: "การร้องเพลง",
         role: singCurrentUserData ? singCurrentUserData.role : 'Student',
         evaluatorName: singCurrentUserData ? singCurrentUserData.fullName : '',
+        rhythmScore: singSelectedScores.rhythm,
+        melodyScore: singSelectedScores.melody,
+        expressionScore: singSelectedScores.expression,
         scores: [singSelectedScores.rhythm, singSelectedScores.melody, singSelectedScores.expression]
       });
 
@@ -284,7 +300,6 @@ function singConfirmSubmitEvaluation() {
     }
   });
 }
-
 // 🟢 5. วาด Radar Chart 3 ฝ่าย
 function singInitRadarCharts(tScores, sScores, pScores) {
   const levelLabels = ["", "เริ่มต้น", "กำลังพัฒนา", "สามารถ", "เหนือความคาดหวัง"];
@@ -378,7 +393,7 @@ function singToggleRecording() {
   if (!singIsRecording) {
     singRecordedChunks = [];
     
-    // 👈 บีบอัดวิดีโอ (Bitrate 250kbps) ป้องกัน Payload เกินขนาดส่งผ่าน Apps Script
+    // บีบอัดวิดีโอ (Bitrate 250kbps) ป้องกัน Payload เกินขนาดส่งผ่าน Apps Script
     let options = { videoBitsPerSecond: 250000 };
     if (typeof MediaRecorder.isTypeSupported === 'function') {
       if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
@@ -416,6 +431,39 @@ function singToggleRecording() {
   }
 }
 
+// 🟢 1. ฟังก์ชันช่วยสำหรับการส่ง API พร้อมระบบ Retry อัตโนมัติ (ลองส่งซ้ำสูงสุด 3 ครั้ง)
+async function uploadVideoWithRetry(payload, maxRetries = 3, delayMs = 3000) {
+  const loadingText = document.getElementById("loadingText");
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      if (attempt > 1 && loadingText) {
+        loadingText.textContent = `เซิร์ฟเวอร์หนาแน่น กำลังพยายามส่งซ้ำ (ครั้งที่ ${attempt}/${maxRetries})...`;
+      }
+
+      const res = await singApiCall("uploadSingingVideo", payload);
+      if (res && res.success) {
+        return res; // ส่งสำเร็จ คืนค่าผลลัพธ์ทันที
+      }
+
+      // หากส่งไม่สำเร็จ แต่ยังไม่ครบจำนวนรอบ Retry ให้รอตามช่วงเวลาที่กำหนด
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+      } else {
+        return res; // พยายามครบแล้วยังไม่สำเร็จ ให้ส่งผลลัพธ์ล้มเหลวกลับไป
+      }
+    } catch (err) {
+      console.warn(`[Upload Attempt ${attempt} Failed]:`, err);
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+      } else {
+        throw err;
+      }
+    }
+  }
+}
+
+// 🟢 2. ปรับปรุงฟังก์ชันบันทึกวิดีโอหลัก
 function singSaveRecordedVideo() {
   const mimeType = (singMediaRecorder && singMediaRecorder.mimeType) ? singMediaRecorder.mimeType.split(';')[0] : 'video/webm';
   const blob = new Blob(singRecordedChunks, { type: mimeType });
@@ -429,24 +477,58 @@ function singSaveRecordedVideo() {
     if (loadingText) loadingText.textContent = "กำลังอัปโหลดวิดีโอลง Google Drive...";
     if (loadingEl) loadingEl.style.display = "flex";
 
-    const res = await singApiCall("uploadSingingVideo", {
+    const sName = singCurrentUserData ? (singCurrentUserData.fullName || singCurrentUserData.studentName || '') : '';
+    const sClass = singCurrentUserData ? (singCurrentUserData.classRoom || singCurrentUserData.classroom || '') : '';
+
+    const payload = {
       studentCode: singTargetStudentCode,
-      studentName: singCurrentUserData ? singCurrentUserData.fullName : '',
-      classRoom: singCurrentUserData ? singCurrentUserData.classRoom : '',
-      category: 'ร้องเพลง',
+      studentName: sName,
+      classRoom: sClass,
+      category: 'การร้องเพลง',
       mimeType: mimeType,
       base64: base64Data
-    });
+    };
 
-    if (loadingEl) loadingEl.style.display = "none";
-    singStopCamera();
+    try {
+      // เรียกใช้ระบบ Retry ส่งซ้ำสูงสุด 3 ครั้งอัตโนมัติ
+      const res = await uploadVideoWithRetry(payload, 3, 3000);
 
-    if (res && res.success) {
-      Swal.fire("สำเร็จ!", "อัปโหลดวิดีโอลง Google Drive สำเร็จ", "success").then(() => {
-        singFetchAndSetupEvaluation(singTargetStudentCode);
+      if (loadingEl) loadingEl.style.display = "none";
+
+      if (res && res.success) {
+        singStopCamera(); // ปิดกล้องสดเมื่อส่งสำเร็จเรียบร้อยแล้ว
+        Swal.fire("สำเร็จ!", "อัปโหลดวิดีโอลง Google Drive สำเร็จ", "success").then(() => {
+          singFetchAndSetupEvaluation(singTargetStudentCode);
+        });
+      } else {
+        // หากพยายามครบ 3 ครั้งแล้วยังล้มเหลว ให้แสดงปุ่มลองส่งใหม่จากไฟล์เดิม
+        Swal.fire({
+          title: "อัปโหลดไม่สำเร็จ",
+          text: res ? res.message : "การเชื่อมต่อขัดข้องหรือเซิร์ฟเวอร์หนาแน่น",
+          icon: "error",
+          showCancelButton: true,
+          confirmButtonText: "<i class='fa-solid fa-rotate-right me-1'></i>พยายามส่งใหม่อีกครั้ง",
+          cancelButtonText: "ยกเลิก"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            singSaveRecordedVideo(); // เรียกฟังก์ชันส่งซ้ำทันทีโดยไม่ต้องอัดใหม่
+          }
+        });
+      }
+    } catch (err) {
+      if (loadingEl) loadingEl.style.display = "none";
+      Swal.fire({
+        title: "เกิดข้อผิดพลาดในการส่งข้อมูล",
+        text: err.message || "การเชื่อมต่อเครือข่ายขัดข้อง",
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonText: "<i class='fa-solid fa-rotate-right me-1'></i>พยายามส่งใหม่อีกครั้ง",
+        cancelButtonText: "ยกเลิก"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          singSaveRecordedVideo(); // เรียกฟังก์ชันส่งซ้ำทันทีโดยไม่ต้องอัดใหม่
+        }
       });
-    } else {
-      Swal.fire("ข้อผิดพลาด", res ? res.message : "อัปโหลดไม่สำเร็จ", "error");
     }
   };
   reader.readAsDataURL(blob);
