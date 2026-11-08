@@ -28,15 +28,14 @@ let singIsRecording = false;
 // 🟢 1. เริ่มต้นระบบเมื่อเปิดหน้าเว็บ
 document.addEventListener("DOMContentLoaded", function() {
   const urlParams = new URLSearchParams(window.location.search);
-  const studentCode = urlParams.get("studentCode") || "";
-  const role = urlParams.get("role") || "Student"; // 👈 รองรับการส่งบทบาท Teacher/Parent ผ่าน URL
+  const studentCode = urlParams.get("studentCode") || singCurrentUserData.studentCode || "";
+  const role = urlParams.get("role") || singCurrentUserData.role || "Student";
 
   if (studentCode) {
     singTargetStudentCode = studentCode;
     singCurrentUserData.studentCode = studentCode;
     singCurrentUserData.role = role;
 
-    // ดึงข้อมูลการประเมินวิชาร้องเพลง
     singFetchAndSetupEvaluation(studentCode);
   }
 });
@@ -97,6 +96,8 @@ async function singFetchAndSetupEvaluation(studentCode) {
       role: singCurrentUserData ? singCurrentUserData.role : 'Student'
     });
 
+    console.log("📌 [API Response getSingingEvaluationStatus]:", res);
+
     if (loadingEl) loadingEl.style.display = "none";
 
     if (!res || !res.success) {
@@ -116,15 +117,16 @@ async function singFetchAndSetupEvaluation(studentCode) {
       if (actionButtonsContainer) actionButtonsContainer.classList.remove("d-none");
     }
 
-    // 🟢 2. อัปเดตชื่อนักเรียนและห้องเรียนจากข้อมูลจริงที่ API ส่งกลับมา
-    if (res.studentName) {
-      singCurrentUserData.fullName = res.studentName;
-      const nameEl = document.getElementById("singStudentName");
-      if (nameEl) nameEl.innerHTML = `<i class="fa-solid fa-microphone text-danger me-2"></i>${res.studentName}`;
-    }
-
-    if (res.classRoom || res.classroom) {
-      singCurrentUserData.classRoom = res.classRoom || res.classroom;
+    // 🟢 2. อัปเดตชื่อนักเรียนและห้องเรียนจากข้อมูลจริงที่ API ส่งกลับมา (เพิ่ม Null Guard)
+    if (singCurrentUserData) {
+      if (res.studentName) {
+        singCurrentUserData.fullName = res.studentName;
+        const nameEl = document.getElementById("singStudentName");
+        if (nameEl) nameEl.innerHTML = `<i class="fa-solid fa-microphone text-danger me-2"></i>${res.studentName}`;
+      }
+      if (res.classRoom || res.classroom) {
+        singCurrentUserData.classRoom = res.classRoom || res.classroom;
+      }
     }
 
     // 🟢 3. ตรวจหา File ID จากข้อมูลในระบบ
@@ -155,6 +157,11 @@ async function singFetchAndSetupEvaluation(studentCode) {
     singSelectedScores = { rhythm: 0, melody: 0, expression: 0 };
     singIsEvaluationLocked = false;
 
+    // ล้างคลาสไฮไลต์และล็อคเดิมทั้งหมดออกก่อน
+    document.querySelectorAll(`.rubric-cell`).forEach(c => {
+      c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4');
+    });
+
     if (res.isEvaluated) {
       singIsEvaluationLocked = true;
 
@@ -163,8 +170,14 @@ async function singFetchAndSetupEvaluation(studentCode) {
       if (descEl) descEl.textContent = "ระบบได้รับการบันทึกคะแนนเรียบร้อย ไม่สามารถกดแก้ไขได้";
       if (btnContainer) btnContainer.classList.add("d-none");
 
-      const userRole = singCurrentUserData ? singCurrentUserData.role : 'Student';
-      const myScores = userRole === "Teacher" ? res.teacherScores : (userRole === "Parent" ? res.parentScores : res.studentScores);
+      const rawRole = String(singCurrentUserData ? singCurrentUserData.role : 'Student').toLowerCase();
+      let myScores = res.studentScores;
+
+      if (rawRole.includes('teacher') || rawRole.includes('ครู')) {
+        myScores = res.teacherScores;
+      } else if (rawRole.includes('parent') || rawRole.includes('ผู้ปกครอง')) {
+        myScores = res.parentScores;
+      }
 
       if (myScores) {
         ['rhythm', 'melody', 'expression'].forEach((row, idx) => {
@@ -184,10 +197,6 @@ async function singFetchAndSetupEvaluation(studentCode) {
       if (titleEl) titleEl.textContent = "ยังไม่ได้ประเมิน";
       if (descEl) descEl.textContent = "กรุณารับชมวิดีโอและทำการประเมินในตารางด้านล่าง";
       if (btnContainer) btnContainer.classList.remove("d-none");
-
-      document.querySelectorAll(`.rubric-cell`).forEach(c => {
-        c.classList.remove('locked', 'selected-1', 'selected-2', 'selected-3', 'selected-4');
-      });
     }
 
     // 🟢 5. แสดงผลและวาด Radar Chart เฉพาะเมื่อมีส่วนประกอบใน DOM
@@ -209,6 +218,7 @@ async function singFetchAndSetupEvaluation(studentCode) {
   } catch (err) {
     console.error("💥 [EXCEPTION ERROR]:", err);
     if (loadingEl) loadingEl.style.display = "none";
+    if (videoFrame) videoFrame.src = "";
     if (videoContainer) videoContainer.classList.add("d-none");
     if (noVideoAlert) noVideoAlert.classList.remove("d-none");
   }
@@ -389,6 +399,11 @@ async function singStartCamera() {
 function singToggleRecording() {
   const btnRecord = document.getElementById("singBtnRecord");
   const statusBadge = document.getElementById("singRecordingStatus");
+
+  if (!singMediaStream) {
+    Swal.fire("แจ้งเตือน", "กรุณากดเปิดกล้องสดก่อนเริ่มบันทึกวิดีโอ", "warning");
+    return;
+  }
 
   if (!singIsRecording) {
     singRecordedChunks = [];

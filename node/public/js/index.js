@@ -1,4 +1,4 @@
-const IS_DEV = false; // 👈 เปลี่ยนเป็น true เพื่อทดสอบแบบไม่ผ่าน LINE LIFF / เปลี่ยนเป็น false เมื่อใช้งานจริง
+const IS_DEV = true; // 👈 เปลี่ยนเป็น true เพื่อทดสอบแบบไม่ผ่าน LINE LIFF / เปลี่ยนเป็น false เมื่อใช้งานจริง
 const DEV_ROLE = "Student"; // "Student", "Teacher", หรือ "Parent"
 const DEV_STUDENT_ID = "1"; // รหัสนักเรียนสำหรับใช้ทดสอบ
 
